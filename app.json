@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Bayyae AI",
+    "slug": "bayyae-ai",
+    "version": "1.0.0",
+    "ios": {
+      "bundleIdentifier": "com.bayyae.ai",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.bayyae.ai",
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      }
+    }
+  }
+}
