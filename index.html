@@ -6,8 +6,7 @@
     <title>แบยีติวให้</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;400;600;800;900&family=Noto+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         :root{
             --bg:#06060e;--bg2:#0c0c18;--bg3:#14142a;
@@ -38,7 +37,6 @@
         body{font-family:'Noto Sans Thai','Kanit',sans-serif;background:var(--bg);color:var(--txt);height:100vh;overflow:hidden;transition:background .5s,color .5s;}
         ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:10px;}
 
-        /* ===== แบรนด์ ===== */
         .brand{font-family:'Kanit';font-weight:900;line-height:1;display:inline-flex;align-items:baseline;gap:1px;}
         .brand .p{color:var(--purple);}.brand .r{color:var(--red);}
         .brand-xs{font-size:.82rem;letter-spacing:-.3px;}
@@ -47,7 +45,6 @@
         .brand-lg{font-size:2.6rem;letter-spacing:-1.5px;}
         .brand-xl{font-size:4.2rem;letter-spacing:-3px;filter:drop-shadow(0 0 40px var(--glow)) drop-shadow(0 0 80px var(--glow-r));}
 
-        /* ===== แอนิเมชันพื้นหลัง ===== */
         .anim-bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
         .anim-bg .orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.25;will-change:transform;}
         .anim-bg .orb:nth-child(1){width:500px;height:500px;background:var(--purple);top:-10%;left:-5%;animation:orbM 18s ease-in-out infinite;}
@@ -55,7 +52,6 @@
         .anim-bg .orb:nth-child(3){width:350px;height:350px;background:var(--indigo);top:40%;left:50%;animation:orbM 25s ease-in-out infinite 3s;}
         @keyframes orbM{0%,100%{transform:translate(0,0) scale(1);}25%{transform:translate(60px,-40px) scale(1.1);}50%{transform:translate(-30px,50px) scale(.95);}75%{transform:translate(40px,20px) scale(1.05);}}
 
-        /* ===== โลโก้ ===== */
         .logo-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;}
         .logo-ring{position:absolute;border-radius:50%;border:2px solid transparent;animation:spinR linear infinite;}
         .logo-ring:nth-child(1){inset:-6px;border-top-color:var(--purple);border-right-color:var(--purple);animation-duration:3s;}
@@ -66,7 +62,6 @@
         .logo-core img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;}
         .logo-core i{color:#fff;}
 
-        /* ===== LOGIN ===== */
         .login-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s;}
         .login-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none;}
         .login-card{position:relative;z-index:2;background:var(--card);border:1px solid transparent;border-radius:32px;padding:3rem 2.8rem 2.5rem;width:460px;max-width:93vw;text-align:center;background-clip:padding-box;box-shadow:0 30px 100px var(--shadow),0 0 80px var(--glow);}
@@ -83,7 +78,6 @@
         .login-btn:hover::after{transform:translateX(100%);}
         .login-error{color:var(--danger);font-size:.82rem;margin-top:.8rem;min-height:1.2em;}
 
-        /* ===== BLOCK ===== */
         .block-overlay{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:900;display:none;align-items:center;justify-content:center;flex-direction:column;gap:1rem;}
         .block-overlay.show{display:flex;}
         .block-overlay .bi{font-size:4.5rem;color:var(--danger);animation:bP 1.5s ease-in-out infinite;}
@@ -92,29 +86,22 @@
         .block-timer{font-size:3.5rem;font-weight:900;color:var(--danger);font-family:'Kanit';letter-spacing:3px;}
         @keyframes bP{0%,100%{transform:scale(1) rotate(0);opacity:1;}50%{transform:scale(1.2) rotate(-8deg);opacity:.6;}}
 
-        /* ===== TOAST ===== */
         .toast-c{position:fixed;top:20px;right:20px;z-index:950;display:flex;flex-direction:column;gap:8px;}
         .toast{padding:14px 20px;border-radius:14px;background:var(--card);border:1px solid var(--border);color:var(--txt);font-size:.83rem;transform:translateX(130%);transition:transform .4s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 15px 50px var(--shadow);display:flex;align-items:center;gap:10px;backdrop-filter:blur(12px);}
         .toast.show{transform:translateX(0);}
         .toast.error{border-color:var(--danger);}.toast.error i{color:var(--danger);}
+        .toast.success{border-color:var(--purple);}.toast.success i{color:var(--purple);}
 
-        /* ===== MODAL ===== */
         .modal-o{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
         .modal-o.show{display:flex;}
         .modal-c{background:var(--card);border:1px solid var(--border);border-radius:28px;padding:2.5rem;width:400px;max-width:90vw;text-align:center;box-shadow:0 25px 80px var(--shadow);animation:mIn .35s cubic-bezier(.175,.885,.32,1.275);}
         @keyframes mIn{from{opacity:0;transform:scale(.85) translateY(30px);}to{opacity:1;transform:scale(1) translateY(0);}}
-        .modal-c .lk{font-size:3rem;color:var(--warn);margin-bottom:1rem;}
-        .modal-c h3{font-family:'Kanit';font-weight:700;font-size:1.3rem;margin-bottom:.8rem;}
-        .modal-c p{color:var(--txt2);font-size:.88rem;line-height:1.7;}
-        .modal-c .pt{font-size:1.6rem;font-weight:900;color:var(--purple);font-family:'Kanit';margin:1rem 0;}
         .modal-x{margin-top:1.2rem;padding:12px 40px;border:2px solid var(--border);border-radius:14px;background:var(--card);color:var(--txt);cursor:pointer;font-family:inherit;font-size:.88rem;transition:all .2s;}
         .modal-x:hover{border-color:var(--purple);color:var(--purple);}
 
-        /* ===== APP ===== */
         .app{display:flex;height:100vh;opacity:0;transition:opacity .6s;position:relative;z-index:1;}
         .app.vis{opacity:1;}
 
-        /* ===== SIDEBAR ===== */
         .sidebar{width:290px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:transform .35s cubic-bezier(.4,0,.2,1),background .5s;backdrop-filter:blur(16px);}
         .sb-head{padding:1.2rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
         .sb-head h3{font-family:'Kanit';font-weight:600;font-size:.88rem;display:flex;align-items:center;gap:8px;}.sb-head h3 i{color:var(--purple);}
@@ -129,18 +116,14 @@
         .ci:hover .db{opacity:.5;}.ci .db:hover{opacity:1;background:rgba(244,63,94,.2);color:var(--danger);}
         .ci.act .db{color:rgba(255,255,255,.7);}.ci.act .db:hover{background:rgba(255,255,255,.2);color:#fff;}
         .sb-bot{padding:.8rem 1rem 1rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:.7rem;}
-        .ms label{font-size:.65rem;color:var(--txt2);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:1.5px;}
-        .ms select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:10px;background:var(--input);color:var(--txt);font-family:inherit;font-size:.8rem;cursor:pointer;outline:none;transition:border-color .3s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath fill='%235a5a72' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
-        .ms select:focus{border-color:var(--purple);}
-        .ml-info{font-size:.68rem;color:var(--warn);margin-top:.3rem;display:none;align-items:center;gap:4px;}.ml-info.show{display:flex;}
-        .sb-acts{display:flex;gap:.5rem;}
-        .sb-acts button{flex:1;padding:8px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--txt2);cursor:pointer;font-size:.76rem;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;}
+        .sb-acts{display:flex;gap:.5rem;flex-wrap:wrap;}
+        .sb-acts button{flex:1;padding:8px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--txt2);cursor:pointer;font-size:.76rem;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;}
         .sb-acts button:hover{border-color:var(--purple);color:var(--purple);}
+        .sb-acts button.admin-btn{border-color:var(--warn);color:var(--warn);}
+        .sb-acts button.admin-btn:hover{background:var(--warn);color:#fff;}
 
-        /* ===== CHAT MAIN ===== */
         .chat-main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;overflow:hidden;}
         #particleCanvas{position:absolute;inset:0;z-index:0;pointer-events:none;}
-        .chat-bg-img{position:absolute;inset:0;z-index:0;background-size:contain;background-repeat:no-repeat;background-position:center;opacity:0;pointer-events:none;transition:opacity .5s;}
 
         .ch-head{padding:.8rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--glass);backdrop-filter:blur(20px);position:relative;z-index:3;}
         .ch-head-l{display:flex;align-items:center;gap:.8rem;}
@@ -149,7 +132,6 @@
         .ch-head-info .ml{font-size:.68rem;color:var(--txt2);display:block;margin-top:2px;}
         .u-av{width:36px;height:36px;border-radius:50%;background:var(--ububble);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;box-shadow:0 4px 16px var(--glow);}
 
-        /* ===== MESSAGES ===== */
         .ch-msgs{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:.8rem;position:relative;z-index:2;}
         .msg{display:flex;gap:.7rem;max-width:78%;animation:msgIn .4s cubic-bezier(.175,.885,.32,1.275);}
         .msg.usr{align-self:flex-end;flex-direction:row-reverse;}
@@ -171,7 +153,6 @@
         .m-bub.warn{border-color:var(--danger)!important;background:rgba(239,68,68,.08)!important;color:var(--danger)!important;}
         .m-bub.warn::before{background:var(--danger)!important;}
 
-        /* ===== THINKING ===== */
         .thk{display:flex;gap:.7rem;max-width:78%;align-self:flex-start;animation:msgIn .4s ease;}
         .thk .m-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--ububble);box-shadow:0 2px 12px var(--glow);}
         .thk .m-av img{width:100%;height:100%;object-fit:cover;}
@@ -197,7 +178,6 @@
         @keyframes dotB{0%,80%,100%{transform:scale(.4);opacity:.3;}40%{transform:scale(1.1);opacity:1;}}
         .typ-label{font-size:.75rem;color:var(--txt2);font-style:italic;}
 
-        /* ===== RUNNING CHAR ===== */
         .rchar{position:fixed;right:18px;z-index:50;display:none;transition:top .22s ease-out;filter:drop-shadow(0 4px 12px var(--glow));}
         .rchar.show{display:block;}
         .rc-sprite{position:relative;width:46px;height:46px;}
@@ -219,7 +199,6 @@
         .s-cur::after{content:'▌';animation:curB .6s step-end infinite;color:var(--purple);}
         @keyframes curB{0%,100%{opacity:1;}50%{opacity:0;}}
 
-        /* ===== WELCOME ===== */
         .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;color:var(--txt2);padding:2rem;text-align:center;}
         .welcome .w-logo{margin-bottom:.6rem;}
         .welcome .w-sub{font-size:.9rem;max-width:380px;line-height:1.7;margin-top:.3rem;}
@@ -227,7 +206,6 @@
         .w-hint{padding:9px 18px;border:1px solid var(--border);border-radius:22px;font-size:.78rem;color:var(--txt2);cursor:pointer;transition:all .25s;background:var(--glass);backdrop-filter:blur(8px);}
         .w-hint:hover{border-color:var(--purple);color:var(--purple);transform:translateY(-3px);box-shadow:0 6px 20px var(--glow);}
 
-        /* ===== INPUT ===== */
         .ch-input{padding:1rem 1.5rem;border-top:1px solid var(--border);background:var(--glass);backdrop-filter:blur(20px);display:flex;gap:.7rem;align-items:center;position:relative;z-index:3;}
         .ch-input input{flex:1;padding:13px 20px;border:2px solid var(--border);border-radius:var(--r);background:var(--input);color:var(--txt);font-size:.88rem;font-family:inherit;outline:none;transition:all .3s;}
         .ch-input input:focus{border-color:var(--purple);box-shadow:0 0 0 4px var(--glow);}
@@ -240,7 +218,6 @@
         .send-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transform:translateX(-100%);transition:transform .5s;}
         .send-btn:hover::after{transform:translateX(100%);}
 
-        /* ===== LIGHT EXTRAS ===== */
         [data-theme="light"] .anime-face .blush{background:rgba(255,100,100,.6);}
         [data-theme="light"] .w-hint:hover{background:rgba(124,58,237,.06);}
         .kd{display:none;position:fixed;pointer-events:none;z-index:0;font-size:1.1rem;opacity:.1;animation:kDr 7s ease-in-out infinite;}
@@ -252,7 +229,6 @@
         .kd:nth-child(5){top:82%;right:3%;animation-delay:3.5s;}
         @keyframes kDr{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-18px) rotate(12deg);}}
 
-        /* ===== MOBILE ===== */
         .sb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;display:none;backdrop-filter:blur(3px);}
         .sb-overlay.show{display:block;}
         @media(max-width:768px){
@@ -263,18 +239,63 @@
             .rchar{right:8px;}
             .brand-xl{font-size:3rem!important;}
             .brand-lg{font-size:2rem!important;}
+            .admin-modal-body{max-height:70vh!important;}
         }
 
-        /* ===== LOADING SPINNER ===== */
         .spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spinR .8s linear infinite;margin-right:8px;vertical-align:middle;}
+
+        /* ===== ADMIN MODAL ===== */
+        .admin-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:850;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+        .admin-modal.show{display:flex;}
+        .admin-modal-body{background:var(--card);border:1px solid var(--border);border-radius:28px;width:680px;max-width:95vw;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 100px var(--shadow),0 0 60px var(--glow);animation:mIn .4s cubic-bezier(.175,.885,.32,1.275);}
+        .admin-modal-body::before{content:'';position:absolute;inset:-1px;border-radius:29px;padding:1px;background:linear-gradient(135deg,var(--purple),var(--red),var(--indigo));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:0;}
+        .admin-modal-body{position:relative;}
+        .admin-head{padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+        .admin-head h2{font-family:'Kanit';font-weight:800;font-size:1.2rem;display:flex;align-items:center;gap:10px;}
+        .admin-head h2 i{color:var(--warn);}
+        .admin-close{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--txt2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.9rem;}
+        .admin-close:hover{border-color:var(--danger);color:var(--danger);background:rgba(239,68,68,.1);}
+        .admin-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 1rem;position:relative;z-index:1;overflow-x:auto;}
+        .admin-tab{padding:.8rem 1.2rem;border:none;background:none;color:var(--txt2);font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;white-space:nowrap;}
+        .admin-tab:hover{color:var(--txt);}
+        .admin-tab.act{color:var(--purple);border-bottom-color:var(--purple);}
+        .admin-content{flex:1;overflow-y:auto;padding:1.5rem 2rem;position:relative;z-index:1;}
+        .admin-section{display:none;}
+        .admin-section.act{display:block;}
+        .admin-section h3{font-family:'Kanit';font-weight:700;font-size:.95rem;margin-bottom:1rem;color:var(--txt);display:flex;align-items:center;gap:8px;}
+        .admin-section h3 i{color:var(--purple);font-size:.85rem;}
+        .adm-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem;}
+        .adm-input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;background:var(--input);color:var(--txt);font-size:.85rem;font-family:inherit;outline:none;transition:all .3s;}
+        .adm-input:focus{border-color:var(--purple);box-shadow:0 0 0 3px var(--glow);}
+        .adm-input::placeholder{color:var(--txt2);}
+        .adm-file{width:100%;padding:10px;border:2px dashed var(--border);border-radius:12px;background:var(--input);color:var(--txt);font-size:.82rem;font-family:inherit;cursor:pointer;transition:all .3s;}
+        .adm-file:hover{border-color:var(--purple);}
+        .adm-btn{padding:12px 24px;border:none;border-radius:12px;font-size:.85rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:8px;}
+        .adm-btn-primary{background:var(--ububble);color:#fff;}
+        .adm-btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px var(--glow);}
+        .adm-btn-blue{background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;}
+        .adm-btn-blue:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.3);}
+        .adm-btn-warn{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;}
+        .adm-btn-warn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,158,11,.3);}
+        .adm-btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;}
+        .adm-btn-danger:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(239,68,68,.3);}
+        .adm-btn-full{width:100%;justify-content:center;}
+        .adm-status{font-size:.78rem;color:var(--warn);font-weight:600;margin-top:.3rem;display:flex;align-items:center;gap:6px;}
+        .adm-list{max-height:180px;overflow-y:auto;border:1px solid var(--border);border-radius:12px;padding:.5rem;background:var(--bg2);margin-bottom:1rem;}
+        .adm-list-empty{padding:1.5rem;text-align:center;color:var(--txt2);font-size:.8rem;}
+        .adm-item{display:flex;justify-content:space-between;align-items:center;padding:.5rem .7rem;border-radius:8px;margin-bottom:2px;transition:background .15s;gap:8px;font-size:.8rem;}
+        .adm-item:hover{background:var(--bg3);}
+        .adm-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+        .adm-item .del-btn{background:rgba(239,68,68,.15);color:var(--danger);border:none;border-radius:6px;cursor:pointer;padding:4px 10px;font-size:.7rem;font-family:inherit;transition:all .2s;flex-shrink:0;}
+        .adm-item .del-btn:hover{background:var(--danger);color:#fff;}
+        .adm-item .arrow{color:var(--purple);margin:0 4px;flex-shrink:0;}
+        .adm-row{display:flex;gap:.6rem;}
+        .adm-row .adm-btn{flex:1;justify-content:center;}
     </style>
 </head>
 <body>
 
-<!-- แอนิเมชันพื้นหลัง -->
 <div class="anim-bg"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
-
-<!-- กะทุ่มโหมดสว่าง -->
 <div class="kd">✿</div><div class="kd">♡</div><div class="kd">⋆</div><div class="kd">❀</div><div class="kd">♪</div>
 
 <!-- ล็อกอิน -->
@@ -282,8 +303,9 @@
     <div class="login-card">
         <div class="login-logo logo-wrap" id="loginLogoWrap"></div>
         <div class="brand brand-xl"><span class="p">แบยี</span><span class="r">ติวให้</span></div>
-        <p class="login-desc">AI ส่วนตัวของ sadf — ถามอะไรก็ได้<br>ฉันพร้อมช่วยเหลือเสมอนะคะ</p>
-        <input type="email" class="login-input" id="loginEmail" placeholder="example@email.com" autocomplete="email">
+        <p class="login-desc">AI ถาม-ตอบ ระบบจัดการข้อมูล — พร้อมเรียนรู้<br>สอนใหม่ได้ตลอดเวลาเลยนะ</p>
+        <input type="text" class="login-input" id="loginUser" placeholder="Username" autocomplete="username">
+        <input type="password" class="login-input" id="loginPass" placeholder="Password" autocomplete="current-password">
         <button class="login-btn" id="loginBtn" onclick="handleLogin()"><i class="fas fa-arrow-right" style="margin-right:8px;"></i>เข้าสู่ระบบ</button>
         <div class="login-error" id="loginError"></div>
     </div>
@@ -299,20 +321,60 @@
 </div>
 
 <div class="toast-c" id="toastC"></div>
+<div class="sb-overlay" id="sbOverlay" onclick="toggleSB()"></div>
 
-<!-- Pay modal -->
-<div class="modal-o" id="payModal">
-    <div class="modal-c">
-        <div class="lk"><i class="fas fa-crown"></i></div>
-        <h3>โมเดล 0.2 — Premium</h3>
-        <p>โมเดลพรีเมียมที่ฉลาดกว่า เร็วกว่า แม่นยำกว่า</p>
-        <div class="pt">10 บาท / ชม.</div>
-        <p style="font-size:.78rem;color:var(--txt2);">ยังไม่เปิดให้บริการในตอนนี้</p>
-        <button class="modal-x" onclick="closePayModal()">เข้าใจแล้ว</button>
+<!-- แอดมินโมดอล -->
+<div class="admin-modal" id="adminModal">
+    <div class="admin-modal-body">
+        <div class="admin-head">
+            <h2><i class="fas fa-shield-halved"></i> แผงควบคุมแอดมิน</h2>
+            <button class="admin-close" onclick="closeAdmin()"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="admin-tabs">
+            <button class="admin-tab act" onclick="switchAdTab(0,this)"><i class="fas fa-graduation-cap"></i> สอน Q&A</button>
+            <button class="admin-tab" onclick="switchAdTab(1,this)"><i class="fas fa-link"></i> คำคล้าย</button>
+            <button class="admin-tab" onclick="switchAdTab(2,this)"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="admin-tab" onclick="switchAdTab(3,this)"><i class="fas fa-database"></i> จัดการข้อมูล</button>
+        </div>
+        <div class="admin-content">
+            <!-- แท็บ 0: สอน Q&A -->
+            <div class="admin-section act" id="adSec0">
+                <h3><i class="fas fa-plus-circle"></i> เพิ่มคำถาม-คำตอบใหม่</h3>
+                <div class="adm-group">
+                    <input type="text" class="adm-input" id="trainQ" placeholder="คำถามหลัก (เช่น แบยีติวให้ก่อตั้งปีใหน)">
+                    <input type="text" class="adm-input" id="trainA" placeholder="คำตอบ">
+                    <button class="adm-btn adm-btn-primary adm-btn-full" onclick="trainAI()"><i class="fas fa-save"></i> บันทึกคำถามหลัก</button>
+                </div>
+            </div>
+            <!-- แท็บ 1: คำคล้าย -->
+            <div class="admin-section" id="adSec1">
+                <h3><i class="fas fa-random"></i> เชื่อมโยงคำถามคล้าย (Synonym)</h3>
+                <div class="adm-group">
+                    <input type="text" class="adm-input" id="synNew" placeholder="คำถามคล้าย (เช่น แบยีติวให้เกิดขึ้นเมื่อ)">
+                    <input type="text" class="adm-input" id="synTarget" placeholder="วิ่งไปหาคำถามหลักข้อไหน (เช่น แบยีติวให้ก่อตั้งปีใหน)">
+                    <button class="adm-btn adm-btn-blue adm-btn-full" onclick="trainSynonym()"><i class="fas fa-link"></i> เชื่อมโยงคำคล้าย</button>
+                </div>
+            </div>
+            <!-- แท็บ 2: PDF -->
+            <div class="admin-section" id="adSec2">
+                <h3><i class="fas fa-file-pdf"></i> อัปโหลด / ลบไฟล์ PDF</h3>
+                <div class="adm-group">
+                    <input type="file" class="adm-file" id="pdfUpload" accept="application/pdf">
+                    <button class="adm-btn adm-btn-warn adm-btn-full" onclick="extractPDFText()"><i class="fas fa-upload"></i> อ่านข้อมูลจาก PDF</button>
+                    <button class="adm-btn adm-btn-danger adm-btn-full" onclick="clearPDF()"><i class="fas fa-trash"></i> ลบความจำ PDF ทั้งหมด</button>
+                    <div class="adm-status" id="pdfStatus"></div>
+                </div>
+            </div>
+            <!-- แท็บ 3: จัดการข้อมูล -->
+            <div class="admin-section" id="adSec3">
+                <h3><i class="fas fa-list"></i> รายการคำถามหลัก (<span id="kCount">0</span> รายการ)</h3>
+                <div class="adm-list" id="knowledgeList"></div>
+                <h3><i class="fas fa-sitemap"></i> รายการคำคล้าย (<span id="sCount">0</span> รายการ)</h3>
+                <div class="adm-list" id="synonymList"></div>
+            </div>
+        </div>
     </div>
 </div>
-
-<div class="sb-overlay" id="sbOverlay" onclick="toggleSB()"></div>
 
 <!-- แอปหลัก -->
 <div class="app" id="app">
@@ -323,23 +385,15 @@
         </div>
         <div class="chat-list" id="chatList"></div>
         <div class="sb-bot">
-            <div class="ms">
-                <label>โมเดล</label>
-                <select id="modelSel" onchange="handleModelCh()">
-                    <option value="my-ai">โมเดล 0.1 (ฟรี)</option>
-                    <option value="my-ai-v2">โมเดล 0.2 — 10฿/ชม. 🔒</option>
-                </select>
-                <div class="ml-info" id="mlInfo"><i class="fas fa-info-circle"></i> ต้องจ่ายเงินก่อนจึงใช้ได้</div>
-            </div>
             <div class="sb-acts">
                 <button onclick="toggleTheme()" id="themeBtn"><i class="fas fa-moon" id="themeIcon"></i><span id="themeTxt">สว่าง</span></button>
+                <button class="admin-btn" id="adminBtn" onclick="openAdmin()" style="display:none;"><i class="fas fa-shield-halved"></i> แอดมิน</button>
                 <button onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> ออก</button>
             </div>
         </div>
     </aside>
 
     <main class="chat-main">
-        <div class="chat-bg-img" id="chatBgImg"></div>
         <canvas id="particleCanvas"></canvas>
         <div class="ch-head">
             <div class="ch-head-l">
@@ -347,10 +401,10 @@
                 <div class="ch-head-info">
                     <h4 id="chatTitle">แชทใหม่</h4>
                     <div class="brand brand-xs" id="headerBrand"><span class="p">แบยี</span><span class="r">ติวให้</span></div>
-                    <span class="ml" id="chatModelLbl">โมเดล 0.1</span>
+                    <span class="ml" id="chatModelLbl">ระบบความรู้ในพื้นที่</span>
                 </div>
             </div>
-            <div class="u-av" id="uAv">S</div>
+            <div class="u-av" id="uAv">U</div>
         </div>
 
         <div class="ch-msgs" id="chatMsgs"></div>
@@ -365,7 +419,7 @@
         </div>
 
         <div class="ch-input">
-            <input type="text" id="chatIn" placeholder="ถามอะไร แบยีติวให้..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}">
+            <input type="text" id="chatIn" placeholder="ถามอะไรก็ได้..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}">
             <button class="send-btn" id="sendBtn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </main>
@@ -373,398 +427,1099 @@
 
 <script>
 /* ═══════════════════════════════════════════
-   ⬇️ ใส่ URL โลโก้ตรงนี้ ⬇️
-   ถ้าว่างจะแสดงไอคอนหุ่นยนต์
+   ใส่ URL โลโก้ตรงนี้  ถ้าว่างจะแสดงไอคอนหุ่นยนต์
    ═══════════════════════════════════════════ */
 const AI_LOGO_URL = 'https://scontent-bkk1-2.xx.fbcdn.net/v/t39.30808-6/687657078_122093038857312449_1009002414784607154_n.jpg?stp=dst-jpg_tt6&cstp=mx1024x768&ctp=s1024x768&_nc_cat=104&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=C1lAGnOp-U4Q7kNvwEsoCwW&_nc_oc=AdodOWqvmhJYqrtoirApUihtEqPFFE3hKjWrikezJujlqRWvo24XEQExTGNAyUg-574&_nc_zt=23&_nc_ht=scontent-bkk1-2.xx&_nc_gid=nVyMBEk9p4JG1ESuSOXEsw&_nc_ss=7a2a8&oh=00_AQBXT8iJDBRLeR5OBltmEdveSVqJ7ZKQuZ3ZpB0EhF6o1w&oe=6A4E8CBC';
 
-/* ═══════════════════════════════════════════
-   ⬇️ ใส่ Firebase Config ของคุณตรงนี้ ⬇️
-   ═══════════════════════════════════════════ */
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+/* ===== ฐานความรู้ (จากโค้ด AI ต้นแบบ) ===== */
+
+
+
+
+    // 1. โหลดข้อมูลฐานความรู้หลัก (ฝังค่าเริ่มต้นไว้ในโค้ด)
+    let aiKnowledge = JSON.parse(localStorage.getItem('ai_db')) || {
+        // =====================================================
+
+
+    // ============ 1. ข้อมูลโครงงานทั่วไป ============
+    "โครงงานนี้เรื่องอะไร": "นวัตกรรมรองเท้ากายภาพบำบัดเพื่อการเคลื่อนไหวของผู้ป่วยพาร์กินสัน (Innovative physical therapy shoes for mobility of Parkinson's patients)",
+    "ชื่อโครงงาน": "นวัตกรรมรองเท้ากายภาพบำบัดเพื่อการเคลื่อนไหวของผู้ป่วยพาร์กินสัน",
+    "ชื่อเต็มโครงงาน": "นวัตกรรมรองเท้ากายภาพบำบัดเพื่อการเคลื่อนไหวของผู้ป่วยพาร์กินสัน (Innovative physical therapy shoes for mobility of Parkinson's patients)",
+    "โครงงานวิทยาศาสตร์ประเภทอะไร": "สิ่งประดิษฐ์",
+    "ประเภทโครงงาน": "โครงงานวิทยาศาสตร์ประเภทสิ่งประดิษฐ์",
+    "ชื่อภาษาอังกฤษของโครงงาน": "Innovative physical therapy shoes for mobility of Parkinson's patients",
+    "หัวข้อโครงงาน": "นวัตกรรมรองเท้ากายภาพบำบัดสำหรับผู้ป่วยพาร์กินสัน",
+
+
+    // ============ 2. ผู้จัดทำ ============
+    "ใครจัดทำโครงงานนี้": "นายบาฆอรี เจ๊ะหะ, นางสาวบุศรา สะมะแอ, นางสาวอารียา ดือเลาะ",
+    "ผู้จัดทำโครงงาน": "นายบาฆอรี เจ๊ะหะ, นางสาวบุศรา สะมะแอ, นางสาวอารียา ดือเลาะ",
+    "สมาชิกกลุ่ม": "นายบาฆอรี เจ๊ะหะ, นางสาวบุศรา สะมะแอ, นางสาวอารียา ดือเลาะ",
+    "คณะผู้จัดทำ": "นายบาฆอรี เจ๊ะหะ, นางสาวบุศรา สะมะแอ, นางสาวอารียา ดือเลาะ",
+    "ทีมผู้จัดทำ": "นายบาฆอรี เจ๊ะหะ, นางสาวบุศรา สะมะแอ, นางสาวอารียา ดือเลาะ",
+    "ชื่อสมาชิกคนที่1": "นายบาฆอรี เจ๊ะหะ",
+    "ชื่อสมาชิกคนที่2": "นางสาวบุศรา สะมะแอ",
+    "ชื่อสมาชิกคนที่3": "นางสาวอารียา ดือเลาะ",
+    "บาฆอรี เจ๊ะหะ": "นายบาฆอรี เจ๊ะหะ เป็นผู้จัดทำโครงงานนวัตกรรมรองเท้ากายภาพบำบัดฯ ร่วมกับนางสาวบุศรา สะมะแอ และนางสาวอารียา ดือเลาะ",
+    "บุศรา สะมะแอ": "นางสาวบุศรา สะมะแอ เป็นผู้จัดทำโครงงานร่วม",
+    "อารียา ดือเลาะ": "นางสาวอารียา ดือเลาะ เป็นผู้จัดทำโครงงานร่วม",
+    "กี่คนทำโครงงานนี้": "3 คน",
+    "จำนวนผู้จัดทำ": "3 คน",
+    "ผู้จัดทำกี่คน": "3 คน",
+
+
+    // ============ 3. อาจารย์ที่ปรึกษา ============
+    "อาจารย์ที่ปรึกษา": "นายอาหะมะ เจ๊ะมะ และ นายสุฟรีย์ สาแม",
+    "ใครเป็นอาจารย์ที่ปรึกษา": "นายอาหะมะ เจ๊ะมะ (อาจารย์ที่ปรึกษาโครงงาน) และ นายสุฟรีย์ สาแม (อาจารย์ที่ปรึกษาพิเศษ)",
+    "อาจารย์ที่ปรึกษาโครงงาน": "นายอาหะมะ เจ๊ะมะ",
+    "อาจารย์ที่ปรึกษาพิเศษ": "นายสุฟรีย์ สาแม",
+    "อาหะมะ เจ๊ะมะ": "นายอาหะมะ เจ๊ะมะ เป็นอาจารย์ที่ปรึกษาโครงงาน",
+    "สุฟรีย์ สาแม": "นายสุฟรีย์ สาแม เป็นอาจารย์ที่ปรึกษาพิเศษ ให้คำแนะนำแนวคิด การแก้ไขปัญหา และข้อบกพร่องต่างๆ",
+    "อาจารย์ผู้ให้คำปรึกษา": "นายอาหะมะ เจ๊ะมะ และ นายสุฟรีย์ สาแม",
+
+
+    // ============ 4. โรงเรียน ============
+    "โรงเรียน": "โรงเรียนอัตตรักียะห์อิสลามียะห์",
+    "โรงเรียนอะไร": "โรงเรียนอัตตรักียะห์อิสลามียะห์",
+    "โรงเรียนของผู้จัดทำ": "โรงเรียนอัตตรักียะห์อิสลามียะห์",
+    "เรียนอยู่โรงเรียนไหน": "โรงเรียนอัตตรักียะห์อิสลามียะห์",
+    "ที่อยู่โรงเรียน": "ถนนตรีรัตน์ ตำบลบางนาค อำเภอเมือง จังหวัดนราธิวาส 96000",
+    "โทรศัพท์โรงเรียน": "0-7351-1292",
+    "โทรสารโรงเรียน": "0-7351-3246",
+    "ตำบล": "บางนาค",
+    "อำเภอ": "เมือง",
+    "จังหวัด": "นราธิวาส",
+    "รหัสไปรษณีย์": "96000",
+    "อยู่จังหวัดอะไร": "นราธิวาส",
+    "อยู่อำเภออะไร": "อำเภอเมือง จังหวัดนราธิวาส",
+    "ชั้นปีของผู้จัดทำ": "มัธยมศึกษาปีที่ 6",
+    "เรียนชั้นอะไร": "มัธยมศึกษาปีที่ 6",
+    "ม.6": "ผู้จัดทำโครงงานเป็นนักเรียนชั้นมัธยมศึกษาปีที่ 6 โรงเรียนอัตตรักียะห์อิสลามียะห์",
+
+
+    // ============ 5. บทคัดย่อ ============
+    "บทคัดย่อ": "โครงงานวิทยาศาสตร์ประเภทสิ่งประดิษฐ เรื่อง 'นวัตกรรมรองเท้ากายภาพบำบัดสำหรับผู้ป่วยพาร์กินสัน' มีวัตถุประสงค์เพื่อออกแบบและทดสอบประสิทธิภาพของรองเท้าที่ช่วยเพิ่มความสามารถในการทรงตัว ลดอาการล้ม และเสริมสร้างสมรรถภาพทางกายของผู้ป่วยพาร์กินสันในระยะที่ 1-3 ผลการทดลองพบว่ารองเท้าช่วยเพิ่มความมั่นใจในการเดิน ลดความกลัวการล้ม และสามารถนำไปประยุกต์ใช้ในกิจกรรมทางกาย เช่น การละหมาด การนั่งอ่านอัลกุรอาน การทำฮาลาเกาะ ฯลฯ ได้ดียิ่งขึ้น",
+    "สรุปโครงงาน": "โครงงานนี้ออกแบบรองเท้ากายภาพบำบัดสำหรับผู้ป่วยพาร์กินสันระยะ 1-3 ทดสอบกับผู้สูงอายุ 3 คน ผลพบว่าช่วยเพิ่มความมั่นใจในการเดิน ลดความกลัวการล้ม และใช้ได้ดีในกิจกรรมประจำวัน",
+    "สรุปเนื้อหาโครงงาน": "ออกแบบรองเท้ากายภาพบำบัด 3 รุ่น (KX600, KX1600, MT) เพื่อช่วยผู้ป่วยพาร์กินสัน ผลการทดลองกับผู้สูงอายุ 3 คนพบว่ารุ่น MT ได้คะแนนความพึงพอใจสูงสุด 4.7 คะแนน",
+
+
+    // ============ 6. โรคพาร์กินสัน — ข้อมูลทั่วไป ============
+    "โรคพาร์กินสันคืออะไร": "โรคพาร์กินสันคือโรคที่เกิดจากความเสื่อมของสมองและระบบประสาท พบได้บ่อยรองเป็นอันดับสองจากโรคอัลไซเมอร์",
+    "พาร์กินสันคืออะไร": "โรคที่เกิดจากความเสื่อมของสมองและระบบประสาท พบได้บ่อยเป็นอันดับ 2 รองจากโรคอัลไซเมอร์ โดยเฉลี่ยใน 100,000 คนจะพบผู้ป่วย 425 คน",
+    "Parkinson คืออะไร": "โรคพาร์กินสันเป็นโรคที่เกิดจากความเสื่อมของสมองและระบบประสาท มีอาการมือสั่น เดินลำบาก ก้าวขาไม่ออก การถ่ายเทน้ำหนักไม่ได้ จุดศูนย์ถ่วงเปลี่ยน เสี่ยงหกล้ม",
+    "โรคพาร์กินสันพบบ่อยเป็นอันดับที่เท่าไหร่": "อันดับ 2 รองจากโรคอัลไซเมอร์",
+    "พาร์กินสันอันดับเท่าไหร่": "พบได้บ่อยรองเป็นอันดับสองจากโรคอัลไซเมอร์",
+    "อันดับความชุกของโรคพาร์กินสัน": "อันดับ 2 รองจากโรคอัลไซเมอร์",
+    "โรคอะไรพบบ่อยอันดับ2": "โรคพาร์กินสัน รองจากโรคอัลไซเมอร์",
+    "สถิติผู้ป่วยพาร์กินสัน": "เฉลี่ยใน 100,000 คน จะพบผู้ป่วยพาร์กินสัน 425 คน อ้างอิงจากข้อมูลโรงพยาบาลบำรุงราษฎร์",
+    "อัตราการพบโรคพาร์กินสัน": "ใน 100,000 คน พบ 425 คน (อ้างอิงโรงพยาบาลบำรุงราษฎร์)",
+    "100,000คนพบพาร์กินสันกี่คน": "425 คน",
+    "ผู้ป่วยพาร์กินสันกี่คนต่อแสนคน": "425 คน",
+    "ข้อมูลสถิติมาจากไหน": "โรงพยาบาลบำรุงราษฎร์",
+    "แหล่งอ้างอิงสถิติพาร์กินสัน": "โรงพยาบาลบำรุงราษฎร์",
+
+
+    // ============ 7. อาการพาร์กินสัน ============
+    "อาการของโรคพาร์กินสัน": "มือสั่น เดินลำบาก ก้าวขาไม่ออก การถ่ายเทน้ำหนักไม่ได้ จุดศูนย์ถ่วงของร่างกายเปลี่ยนตำแหน่ง เสี่ยงต่อการหกล้ม กลัวการเดิน กล้ามเนื้อแข็งเกร็ง",
+    "อาการพาร์กินสันมีอะไรบ้าง": "มือสั่น, เดินลำบาก, ก้าวขาไม่ออก, การถ่ายเทน้ำหนักไม่ได้, จุดศูนย์ถ่วงเปลี่ยน, เสี่ยงหกล้ม, กลัวการเดิน, กล้ามเนื้อแข็งเกร็ง",
+    "ผู้ป่วยพาร์กินสันมีอาการอะไร": "มือสั่น เดินลำบาก ก้าวขาไม่ออก ถ่ายเทน้ำหนักไม่ได้ จุดศูนย์ถ่วงเปลี่ยน เสี่ยงหกล้ม กล้ามเนื้อแข็งเกร็ง",
+    "อาการสั่น": "เป็นอาการหนึ่งของโรคพาร์กินสัน มือสั่นไม่หยุด",
+    "มือสั่นเกี่ยวกับพาร์กินสันไหม": "ใช่ มือสั่นเป็นอาการหลักของโรคพาร์กินสัน",
+    "ผู้ป่วยพาร์กินสันเดินยากไหม": "ใช่ ผู้ป่วยพาร์กินสันมีอาการเดินลำบาก ก้าวขาไม่ออก",
+    "ก้าวขาไม่ออก": "เป็นอาการของโรคพาร์กินสัน ผู้ป่วยรู้สึกเท้าถูกล็อกกับพื้น",
+    "จุดศูนย์ถ่วงเปลี่ยน": "เป็นอาการของโรคพาร์กินสัน ทำให้เสี่ยงต่อการหกล้ม",
+    "ผู้ป่วยพาร์กินสันเสี่ยงอะไร": "เสี่ยงต่อการหกล้ม เนื่องจากจุดศูนย์ถ่วงเปลี่ยน การถ่ายเทน้ำหนักไม่ได้ และก้าวขาไม่ออก",
+    "ผลกระทบต่อชีวิตประจำวันของผู้ป่วยพาร์กินสัน": "ผู้ป่วยรู้สึกยากลำบากและกลัวการเดิน ไม่อยากเดิน กิจวัตรประจำวันและกิจกรรมต่างๆ ลดลง กล้ามเนื้อแข็งเกร็ง ส่งผลต่อการทำศาสนากิจ",
+    "พาร์กินสันส่งผลต่อชีวิตอย่างไร": "ทำให้กลัวการเดิน กิจกรรมลดลง กล้ามเนื้อแข็งเกร็ง กระทบต่อการทำศาสนากิจ เช่น การละหมาด การนั่งอ่านอัลกุรอาน การทำฮาลาเกาะ",
+    "พาร์กินสันกระทบศาสนาไหม": "ใช่ ส่งผลต่อการทำศาสนากิจอย่างสมบูรณ์ เช่น การละหมาด การนั่งอ่านอัลกุรอาน การทำฮาลาเกาะ",
+
+
+    // ============ 8. FOG (Freezing of Gait) ============
+    "FOG คืออะไร": "FOG หรือ Freezing of Gait คืออาการที่ผู้ป่วยพาร์กินสันไม่สามารถก้าวเดินได้ชั่วขณะ เหมือนเท้าถูกล็อกกับพื้น",
+    "Freezing of Gait": "อาการที่ผู้ป่วยพาร์กินสันไม่สามารถก้าวเดินได้ชั่วขณะ เหมือนเท้าถูกล็อกกับพื้น",
+    "เท้าล็อกกับพื้น": "เป็นอาการ FOG (Freezing of Gait) ซึ่งพบในผู้ป่วยพาร์กินสัน",
+    "อาการเท้าติดพื้น": "นั่นคืออาการ Freezing of Gait (FOG) ของผู้ป่วยพาร์กินสัน",
+    "เดินไม่ออก": "อาจเป็นอาการ FOG (Freezing of Gait) ของผู้ป่วยพาร์กินสัน ซึ่งเท้าเหมือนถูกล็อกกับพื้น",
+    "รองเท้าช่วยลดFOGได้ไหม": "ใช่ นวัตกรรมรองเท้ากายภาพบำบัดนี้ออกแบบมาเพื่อช่วยลดอาการ FOG ด้วยสัญญาณสั่นที่ฝ่าเท้า",
+
+
+    // ============ 9. ระยะของโรคพาร์กินสันที่เกี่ยวข้อง ============
+    "รองเท้านี้ช่วยผู้ป่วยระยะไหน": "ระยะที่ 1-3 ของโรคพาร์กินสัน",
+    "ช่วยระยะอะไร": "ระยะที่ 1-3 ของโรคพาร์กินสัน",
+    "ระยะ1-3ของพาร์กินสันคืออะไร": "ระยะที่ผู้ป่วยยังสามารถเคลื่อนไหวได้ด้วยตนเองในระดับหนึ่ง แต่เริ่มมีความบกพร่องด้านการเดิน การทรงตัว และความมั่นคงของกล้ามเนื้อบางส่วน",
+    "พาร์กินสันระยะต้น": "ระยะที่ 1-3 ผู้ป่วยยังเคลื่อนไหวได้เองบ้างแต่เริ่มมีปัญหาการเดิน ทรงตัว และกล้ามเนื้อ",
+    "ผู้ป่วยระยะไหนที่รองเท้าช่วยได้": "ระยะที่ 1-3 ซึ่งยังเคลื่อนไหวได้เองระดับหนึ่งแต่เริ่มมีปัญหาการเดินและทรงตัว",
+    "ระยะที่1": "ผู้ป่วยยังเคลื่อนไหวได้ดี อาการยังไม่รุนแรง",
+    "ระยะที่2": "เริ่มมีความบกพร่องด้านการเดินและทรงตัว",
+    "ระยะที่3": "ยังสามารถยืนได้เองแต่มีความบกพร่องด้านความมั่นคงของกล้ามเนื้อ",
+
+
+    // ============ 10. วัตถุประสงค์ ============
+    "วัตถุประสงค์ของโครงงาน": "1.ช่วยลดอาการ FOG และเพิ่มความมั่นใจในการเดินด้วยสัญญาณสั่นที่ฝ่าเท้า 2.วัดผลสัมฤทธิ์เปรียบเทียบพฤติกรรมการเดิน พิสัยการเคลื่อนไหว ก่อนและหลังใช้ 3.ประเมินความพึงพอใจ 4.ศึกษาความเป็นไปได้ในการต่อยอดใช้กับผู้สูงอายุทั่วไป",
+    "วัตถุประสงค์มีกี่ข้อ": "4 ข้อ",
+    "วัตถุประสงค์ข้อ1": "เพื่อช่วยลดอาการ Freezing of Gait (FOG) และเพิ่มความมั่นใจในการเดินของผู้ป่วยพาร์กินสัน ด้วยสัญญาณสั่นที่ฝ่าเท้า",
+    "วัตถุประสงค์ข้อ2": "เพื่อวัดผลสัมฤทธิ์ของนวัตกรรม โดยเปรียบเทียบพฤติกรรมการเดิน พิสัยการเคลื่อนไหว และอาการกล้ามเนื้อก่อนและหลังการใช้งาน",
+    "วัตถุประสงค์ข้อ3": "เพื่อประเมินความพึงพอใจของผู้ใช้ต่อประสบการณ์การใช้งานในชีวิตประจำวัน เช่น ความปลอดภัย ความสะดวก ความรู้สึกผ่อนคลาย",
+    "วัตถุประสงค์ข้อ4": "เพื่อศึกษาความเป็นไปได้ในการต่อยอดใช้งานกับกลุ่มผู้สูงอายุทั่วไปที่มีปัญหาด้านการทรงตัว โดยไม่จำกัดเฉพาะผู้ป่วยพาร์กินสัน",
+    "ทำไมต้องทำโครงงานนี้": "เพื่อช่วยลดอาการ FOG เพิ่มความมั่นใจในการเดิน วัดผลสัมฤทธิ์ ประเมินความพึงพอใจ และศึกษาความเป็นไปได้ในการต่อยอดใช้กับผู้สูงอายุทั่วไป",
+    "เป้าหมายของโครงงาน": "ออกแบบและทดสอบรองเท้ากายภาพบำบัดที่ช่วยเพิ่มความสามารถในการทรงตัว ลดอาการล้ม และเสริมสร้างสมรรถภาพทางกายของผู้ป่วยพาร์กินสันระยะ 1-3",
+
+
+    // ============ 11. ขอบเขต ============
+    "ขอบเขตของโครงงาน": "กลุ่มทดลองเป็นอาสาสมัครที่มีลักษณะทางกายภาพใกล้เคียงกับผู้ป่วยพาร์กินสันระยะ 1-3 ทดสอบอุปกรณ์ต้นแบบ 3 รุ่น (KX600, KX1600, MT) ระยะเวลาทดสอบ 1 สัปดาห์ต่อรุ่น ทดสอบการเดิน การทรงตัว และการใช้งานในชีวิตประจำวันเบื้องต้น",
+    "ทดสอบกี่รุ่น": "3 รุ่น ได้แก่ KX600, KX1600 และ MT",
+    "ทดสอบกี่สัปดาห์": "1 สัปดาห์ต่อรุ่น",
+    "ระยะเวลาทดลอง": "1 สัปดาห์ต่อรุ่น",
+    "ขอบเขตการทดสอบ": "ทดสอบเฉพาะกิจกรรมการเดิน การทรงตัว และการใช้งานในชีวิตประจำวันเบื้องต้น",
+
+
+    // ============ 12. สมมุติฐาน ============
+    "สมมุติฐานของโครงงาน": "หากผู้สูงอายุที่มีลักษณะการเคลื่อนไหวใกล้เคียงกับผู้ป่วยพาร์กินสันระยะต้น ได้ทดลองใช้นวัตกรรมรองเท้ากายภาพบำบัดที่ออกแบบมาเฉพาะ จะสามารถช่วยเพิ่มความสามารถในการเดิน การถ่ายเทน้ำหนัก และการทรงตัวได้ดีกว่าก่อนใช้งาน และมีความพึงพอใจในระดับที่ดีขึ้น",
+    "สมมุติฐาน": "ผู้สูงอายุที่มีลักษณะใกล้เคียงผู้ป่วยพาร์กินสันระยะต้น ใช้รองเท้านวัตกรรมแล้ว จะเดิน ถ่ายเทน้ำหนัก และทรงตัวได้ดีกว่าเดิม พึงพอใจมากขึ้น",
+
+
+    // ============ 13. ตัวแปร ============
+    "ตัวแปรต้น": "การใช้งานรองเท้านวัตกรรมกายภาพบำบัด",
+    "ตัวแปรตาม": "ประสิทธิภาพด้านการเดิน การทรงตัว และการถ่ายเทน้ำหนักของผู้ทดลอง และความพึงพอใจของผู้ทดลองต่อการใช้งานรองเท้า",
+    "ตัวแปรควบคุม": "ลักษณะของกลุ่มทดลอง (เป็นผู้สูงอายุทั่วไป อายุใกล้เคียงกัน ไม่มีโรคข้อรุนแรง) ระยะเวลาในการทดลองใช้งาน และแบบประเมินที่ใช้วัดผลก่อนและหลัง",
+    "ตัวแปรที่ใช้ในโครงงาน": "ตัวแปรต้น: การใช้งานรองเท้านวัตกรรม / ตัวแปรตาม: ประสิทธิภาพการเดิน ทรงตัว ถ่ายเทน้ำหนัก และความพึงพอใจ / ตัวแปรควบคุม: ลักษณะกลุ่มทดลอง ระยะเวลา แบบประเมิน",
+
+
+    // ============ 14. นิยามศัพท์ ============
+    "นิยามFOG": "Freezing of Gait (FOG) คืออาการที่ผู้ป่วยพาร์กินสันไม่สามารถก้าวเดินได้ชั่วขณะ เหมือนเท้าถูกล็อกกับพื้น",
+    "นิยามนวัตกรรมรองเท้ากายภาพ": "รองเท้าที่ออกแบบพิเศษเพื่อช่วยฟื้นฟูการเคลื่อนไหวและการทรงตัว โดยใช้แรงต้านหรือกลไกช่วยเคลื่อนไหว",
+    "นิยามกลุ่มอาสาสมัคร": "บุคคลทั่วไปที่ไม่เป็นโรคพาร์กินสันแต่มีลักษณะทางกายภาพใกล้เคียง และได้รับความยินยอมให้ทดลองใช้อุปกรณ์",
+
+
+    // ============ 15. กลุ่มทดลอง ============
+    "กลุ่มทดลอง": "ผู้สูงอายุทั่วไป 3 คน ที่มีลักษณะทางกายภาพใกล้เคียงกับผู้ป่วยพาร์กินสันระยะ 1-3",
+    "ทดลองกับใคร": "ผู้สูงอายุทั่วไป 3 คน",
+    "ทดลองกี่คน": "3 คน",
+    "กลุ่มตัวอย่าง": "ผู้สูงอายุทั่วไป 3 คน",
+    "จำนวนกลุ่มทดลอง": "3 คน",
+    "ทำไมไม่ทดลองกับผู้ป่วยพาร์กินสันจริง": "เนื่องจากมีข้อจำกัดด้านจริยธรรมทางการแพทย์ การเข้าถึงผู้ป่วยจริง และระยะเวลาของโครงงาน",
+    "ข้อจำกัดด้านจริยธรรม": "ไม่สามารถทดลองกับผู้ป่วยพาร์กินสันจริงได้โดยตรง เนื่องจากข้อจำกัดด้านจริยธรรมทางการแพทย์",
+    "ทำไมใช้ผู้สูงอายุแทน": "เนื่องจากผู้สูงอายุหลายรายมีลักษณะการเคลื่อนไหวคล้ายผู้ป่วยพาร์กินสันระยะต้น เช่น เดินช้า ทรงตัวไม่มั่นคง กล้ามเนื้ออ่อนแรง และสามารถสะท้อนข้อมูลเบื้องต้นได้เหมาะสม",
+    "ผู้สูงอายุคล้ายพาร์กินสันอย่างไร": "มีลักษณะเช่น การเดินช้า ทรงตัวไม่มั่นคง กล้ามเนื้ออ่อนแรงเบื้องต้น การเกร็งของกล้ามเนื้อ ซึ่งใกล้เคียงกับผู้ป่วยพาร์กินสันระยะต้น",
+    "น้ำหนักกลุ่มทดลอง": "แตกต่างกัน อยู่ในช่วง 30-79 กก. แบ่งตามความสามารถในการใช้แรง (มาก กลาง น้อย)",
+    "น้ำหนักของผู้ทดลอง": "30-79 กก. แบ่งเป็นช่วง 30-39 กก. 40-49 กก. 50-59 กก. 60-69 กก. 70-79 กก.",
+    "แบ่งกลุ่มทดลองอย่างไร": "แบ่งตามความสามารถในการใช้แรง 3 ระดับ คือ มาก กลาง น้อย",
+    "ระดับการออกแรง": "แบ่งเป็น 3 ระดับ คือ มาก กลาง น้อย",
+    "แบ่งกลุ่มตามน้ำหนัก": "30-39 กก., 40-49 กก., 50-59 กก., 60-69 กก., 70-79 กก.",
+
+
+    // ============ 16. รุ่นรองเท้า ============
+    "รุ่นรองเท้ามีกี่รุ่น": "3 รุ่น ได้แก่ KX600, KX1600 และ MT",
+    "รุ่นKX600": "รุ่นรองเท้ากายภาพบำบัดที่ใช้สปริงขนาด <=250 N/m รับน้ำหนัก >=30kg ใช้กลไกแรงสปริง",
+    "รุ่นKX1600": "รุ่นรองเท้ากายภาพบำบัดที่ใช้สปริงขนาด <=550 N/m รับน้ำหนัก >=75kg ใช้กลไกแรงสปริง",
+    "รุ่นMT": "รุ่นรองเท้ากายภาพบำบัดที่ใช้มอเตอร์ DC 12V 30W รับน้ำหนัก 60kg เป็นรุ่นที่ใช้พลังงานไฟฟ้า ได้ผลดีที่สุด",
+    "KX600": "รุ่นรองเท้าสปริง รับน้ำหนัก >=30kg สปริง 250 N/m",
+    "KX1600": "รุ่นรองเท้าสปริง รับน้ำหนัก >=75kg สปริง 550 N/m",
+    "MT": "รุ่นรองเท้ามอเตอร์ไฟฟ้า DC 12V 30W รับน้ำหนัก 60kg ได้คะแนนสูงสุด 4.7",
+    "รุ่นBL": "รุ่นต้นแบบแรก ใช้เชือกแรงต้าน 5 ระดับ บอลลูน foam material ที่ตัดหลัง",
+    "รุ่นไหนดีที่สุด": "รุ่น MT ได้คะแนนความพึงพอใจสูงสุด 4.7 คะแนน ดีเท่ากับ 'ดีมาก' ในทุกด้าน",
+    "รุ่นไหนได้คะแนนสูงสุด": "รุ่น MT ได้ 4.7 คะแนน",
+    "รุ่นไหนเหมาะกับคนแรงน้อย": "รุ่น MT เหมาะสำหรับผู้ที่ไม่สามารถออกแรงได้ เพราะใช้มอเตอร์ไฟฟ้าช่วย",
+    "รุ่นไหนเหมาะกับคนแรงมาก": "รุ่น KX1600 เหมาะสำหรับผู้ที่มีกล้ามเนื้อแข็งแรงปานกลางถึงมาก",
+    "รุ่นไหนเหมาะกับคนน้ำหนักน้อย": "รุ่น KX600 รับน้ำหนัก >=30kg",
+    "รุ่นไหนเหมาะกับคนน้ำหนักมาก": "รุ่น KX1600 รับน้ำหนัก >=75kg",
+
+
+    // ============ 17. วัสดุอุปกรณ์แต่ละรุ่น ============
+    "วัสดุของKX600": "รองเท้าแตะ 1 คู่, Foam material 1 แผ่น, สปริงขนาด <=250 N/m ความยาว 4.5cm, สายเคเบิ้ลไทร์ 18 เส้น, เชือกแรงต้าน 5 ระดับ, ที่ตัดหลัง, เชือกผ้าใบ",
+    "วัสดุของKX1600": "รองเท้าแตะ 1 คู่, Foam material 1 แผ่น, สปริงขนาด <=550 N/m ความยาว 4.5cm, สายเคเบิ้ลไทร์ 18 เส้น, เชือกแรงต้าน 5 ระดับ, เชือกผ้าใบ",
+    "วัสดุของMT": "รองเท้าแตะ 1 คู่, Foam material 1 แผ่น, มอเตอร์ DC 12V 30W, ชุดข้อเหวี่ยง แกน 6mm รัศมี 2.5cm, เชือกแรงต้าน 5 ระดับ, ช่องเสียบแจ็กอแด็ปเตอร์, อแด็ปเตอร์ 220AC to 12DC 2A, PWM 12V-24V 10A, สายไฟ 1mm 10M และสวิตช์, เชือกผ้าใบ, กล่องควบคุม",
+    "สปริงของKX600กี่N/m": "250 N/m",
+    "สปริงของKX1600กี่N/m": "550 N/m",
+    "มอเตอร์ของMT": "มอเตอร์ DC 12V 30W",
+    "ชุดข้อเหวี่ยง": "แกน 6mm รัศมี 2.5cm ใช้ในรุ่น MT",
+    "อแด็ปเตอร์ของMT": "แปลงไฟ 220AC to 12DC 2A",
+    "PWMคืออะไร": "PWM 12V-24V 10A ใช้ควบคุมความเร็วมอเตอร์ในรุ่น MT",
+    "Foam material": "วัสดุฟอมที่ใช้วางใต้ฝ่าเท้า ตัดขนาด 3cm x ความยาวด้านข้างรองเท้า",
+    "เคเบิ้ลไทร์ใช้กี่เส้น": "18 เส้น ใช้ 3 เส้นต่อสปริง 1 อัน (มี 3 สปริง จึงใช้ 9 เส้น แต่เตรียมไว้ 18 เส้น)",
+    "เชือกแรงต้านกี่ระดับ": "5 ระดับ",
+    "เชือกผ้าใบทำอะไร": "เย็บเข้ากับที่ตัดหลังรองเท้าให้เป็นรูปห่วง สำหรับคลองเชือกแรงต้าน",
+
+
+    // ============ 18. วิธีการสร้าง ============
+    "วิธีสร้างKX600": "1.ผ่าส้นรองเท้าในแนวตามยาวประมาณ 1/2 2.เจาะรูบริเวณสันรองเท้า 3 รูเป็นรูปสามเหลี่ยม 3.ติดตั้งสปริง 250 N/m 3 อัน 4.ยึดสปริงด้วยเคเบิ้ลไทร์ 5.ตัด foam material 3.เย็บเชือกผ้าใบเป็นห่วง 7.คลองเชือกแรงต้าน",
+    "วิธีสร้างKX1600": "ทำเหมือน KX600 แต่ใช้สปริง 550 N/m แทน",
+    "วิธีสร้างMT": "1.ติดตั้งรองเท้าบนกล่องควบคุม 2.ติดตั้งชุดข้อเหวี่ยงกับรองเท้า 3.ต่อชุดข้อเหวี่ยงกับแกนมอเตอร์ 4.ต่อสายไฟจากมอเตอร์到PWM 5.ต่อสายไฟจากPWM到แจ็ก 6.ติดตั้งอุปกรณ์อิเล็กทรอนิกในกล่อง 7.ตัด foam material 8.เย็บเชือกผ้าใบเป็นห่วง 9.คลองเชือกแรงต้าน",
+    "เจาะรูกี่รู": "3 รู เป็นรูปสามเหลี่ยม ทั้งด้านบนและด้านล่างของสันรองเท้า",
+    "สปริงกี่อัน": "3 อัน",
+    "ผ่าส้นรองเท้ากี่ส่วน": "ประมาณ 1/2 ของความยาวด้านข้างรองเท้า",
+
+
+    // ============ 19. กลไกการทำงาน ============
+    "กลไกการทำงานของKX600": "อาศัยกลไกสปริงที่ติดตั้งบริเวณส้นเท้า เมื่อผู้สวมใส่ลงน้ำหนัก สปริงยุบตัวเก็บพลังงานศักย์ยืดหยุ่น เมื่อยกเท้าขึ้น สปริงคืนตัวส่งแรงดันกลับช่วยยกเท้าอัตโนมัติ ตามกฎของฮุก (F = -kx)",
+    "กลไกการทำงานของKX1600": "เหมือน KX600 แต่ใช้สปริง 550 N/m ที่แข็งแรงกว่า",
+    "กลไกการทำงานของMT": "ใช้พลังงานไฟฟ้า 12V แปลงเป็นพลังงานกลโดยมอเตอร์ปัดน้ำฝน มีคุณสมบัติให้แรงบิตสูงในรอบต่ำ มอเตอร์หมุนรอบแกนส่งผ่านพลังงานผ่านแขนข้อเหวี่ยงทำให้รองเท้ากดขึ้น-ลงสลับกัน",
+    "กฎของฮุก": "F = -kx โดย F คือแรง k คือค่าคงที่ของสปริง x คือระยะที่สปริงยืดหรือยุบ แรงที่กระทำต่อสปริงแปรผันตรงกับระยะยืดหรือยุบของสปริง",
+    "Hooke's Law": "F = -kx แรงแปรผันตรงกับระยะยืด/ยุบของสปริง",
+    "พลังงานศักย์ยืดหยุ่น": "พลังงานที่เก็บไว้ในสปริงเมื่อยุบตัว และปล่อยออกมาเมื่อสปริงคืนตัว",
+    "Energy Conversion Principle": "หลักการแปลงพลังงาน ใช้ในรุ่น MT แปลงพลังงานไฟฟ้าเป็นพลังงานกล",
+    "Mechanical Motion Principle": "หลักการกลไก มอเตอร์หมุนรอบแกน ส่งผ่านพลังงานกลผ่านแขนข้อเหวี่ยง ทำให้รองเท้ากดขึ้น-ลงสลับกัน",
+    "Damping System": "ระบบลดแรงสั่นโดยใช้แรงต้านภายใน ใช้ในรุ่น MT",
+    "มอเตอร์ปัดน้ำฝน": "มอเตอร์ที่มีคุณสมบัติให้แรงบิตสูงในรอบต่ำ เหมาะสำหรับงานที่ต้องการแรงแต่ไม่ต้องการความเร็ว ใช้ในรุ่น MT",
+    "Crank Arm": "แขนข้อเหวี่ยง ใช้ส่งผ่านพลังงานกลจากมอเตอร์ไปยังรองเท้า ทำให้เกิดการกดขึ้น-ลง",
+
+
+    // ============ 20. สูตรคำนวณ ============
+    "สูตรคำนวณค่าคงที่สปริง": "k = Gd⁴/(8D³N) โดย G = โมดูลัสแรงเฉือน d = เส้นผ่านศูนย์กลางลวดสปริง D = เส้นผ่านศูนย์กลางเฉลี่ยของสปริง N = จำนวนรอบของสปริง",
+    "สูตรฮุก": "F = kx หรือ w = kx โดย F = แรง, k = ค่าคงที่สปริง, x = ระยะยืดหดของสปริง, w = น้ำหนัก",
+    "คำนวณแรงกดสปริง": "ใช้กฎของฮุก F = kx โดยนำค่า k ที่หามาคูณกับระยะยืดหด x",
+    "Gในสูตรสปริงคืออะไร": "G คือโมดูลัสแรงเฉือนของวัสดุ (Modulus of rigidity)",
+    "dในสูตรสปริงคืออะไร": "d คือเส้นผ่านศูนย์กลางของลวดสปริง",
+    "Dในสูตรสปริงคืออะไร": "D คือเส้นผ่านศูนย์กลางเฉลี่ยของสปริง",
+    "Nในสูตรสปริงคืออะไร": "N คือจำนวนรอบของสปริง (turns)",
+    "kในสูตรสปริงคืออะไร": "k คือค่าคงที่ของสปริง (Spring constant)",
+    "Fในสูตรฮุกคืออะไร": "F คือแรง (Force)",
+    "xในสูตรฮุกคืออะไร": "x คือระยะยืดหดของสปริง",
+    "wในสูตรฮุกคืออะไร": "w คือน้ำหนัก (Weight)",
+
+
+    // ============ 21. วิธีดำเนินการทดลอง ============
+    "ขั้นตอนการทดลอง": "1.ให้ความรู้เกี่ยวกับวัตถุประสงค์และวิธีใช้ 2.เก็บข้อมูลก่อนทดลอง (Pre-test) ข้อมูลสรีรวิทยาและสมรรถภาพ 3.แบ่งกลุ่ม 2 กลุ่ม ใช้ KX1600 และ MT 4.ทำโปรแกรมทดลอง 1 สัปดาห์",
+    "Pre-testคืออะไร": "การเก็บข้อมูลก่อนการทดลอง ได้แก่ ข้อมูลพื้นฐานทางสรีรวิทยา (เพศ น้ำหนัก) และการทดสอบสมรรถภาพทางกาย (ความสามารถในการออกแรง)",
+    "โปรแกรมการทดลอง": "กดสันเท้าลงซ้ายขวาสลับกัน ใน 1 นาทีทำให้ครบ 30 ครั้ง ทำต่อเนื่องจนครบ 30 นาที/วัน",
+    "ทดลองกี่นาทีต่อวัน": "30 นาที/วัน",
+    "ทดลองกี่ครั้งต่อนาที": "30 ครั้ง/นาที",
+    "ทดลองกี่วัน": "1 สัปดาห์ (7 วัน) ต่อรุ่น",
+    "แบ่งกลุ่มทดลองกี่กลุ่ม": "2 กลุ่ม คือ กลุ่มใช้ KX1600 (ออกแรงได้) และกลุ่มใช้ MT (ไม่ค่อยออกแรงได้)",
+    "กลุ่มKX1600ทดลองอย่างไร": "ให้โปรแกรมการทดลองทางกายภาพในรูปแบบต่างๆ จนครบ 1 สัปดาห์",
+    "กลุ่มMTทดลองอย่างไร": "ให้โปรแกรมการทดลองทางกายภาพในรูปแบบต่างๆ จนครบ 1 สัปดาห์",
+    "แบบประเมินมีอะไรบ้าง": "แบบประเมินก่อนและหลังใช้งานรองเท้า ประเมินด้านการเดินมั่นคง การลดอาการ FOG ความมั่นใจและความปลอดภัย และความพึงพอใจต่อการใช้งาน",
+
+
+    // ============ 22. ผลการทดสอบ ============
+    "ผลการทดสอบKX600": "การเดินมั่นคง: ปานกลาง, ลดอาการ FOG: ปานกลาง, มั่นใจปลอดภัย: ดี, พึงพอใจ: ปานกลาง ได้คะแนนรวม 4.3",
+    "ผลการทดสอบKX1600": "การเดินมั่นคง: ดีมาก, ลดอาการ FOG: ดี, มั่นใจปลอดภัย: ดี, พึงพอใจ: ดี ได้คะแนนรวม 4.5",
+    "ผลการทดสอบMT": "การเดินมั่นคง: ดี, ลดอาการ FOG: ดีมาก, มั่นใจปลอดภัย: ดีมาก, พึงพอใจ: ดีมาก ได้คะแนนรวม 4.7 (สูงสุด)",
+    "คะแนนKX600": "4.3 คะแนน",
+    "คะแนนKX1600": "4.5 คะแนน",
+    "คะแนนMT": "4.7 คะแนน (สูงสุด)",
+    "คะแนนสูงสุด": "4.7 คะแนน จากรุ่น MT",
+    "คะแนนต่ำสุด": "4.3 คะแนน จากรุ่น KX600",
+    "เปรียบเทียบผล3รุ่น": "KX600: 4.3คะแนน, KX1600: 4.5คะแนน, MT: 4.7คะแนน — รุ่น MT ได้ผลดีที่สุด",
+    "KX600ดีไหม": "ได้ผลระดับปานกลางถึงดี คะแนน 4.3",
+    "KX1600ดีไหม": "ได้ผลดีถึงดีมาก คะแนน 4.5",
+    "MTดีไหม": "ได้ผลดีมากทุกด้าน คะแนน 4.7 สูงสุด",
+    "รุ่นไหนลดFOGได้ดีสุด": "รุ่น MT ได้ระดับ 'ดีมาก' ในการลดอาการ FOG",
+    "รุ่นไหนเดินมั่นคงสุด": "รุ่น KX1600 ได้ระดับ 'ดีมาก' ในการเดินมั่นคง",
+    "รุ่นไหนมั่นใจปลอดภัยสุด": "รุ่น MT ได้ระดับ 'ดีมาก' ในด้านความมั่นใจและปลอดภัย",
+
+
+    // ============ 23. สรุปอภิปราย ============
+    "สรุปผลโครงงาน": "โครงงานนี้สามารถพัฒนานวัตกรรมรองเท้ากายภาพที่ช่วยลดอาการ FOG เพิ่มความมั่นคงในการเดิน และช่วยให้ผู้ใช้งานมีความมั่นใจในการเคลื่อนไหวมากขึ้น โดยอาศัยหลักการแรงกลแบบง่าย",
+    "อภิปรายผล": "1.MTได้ผลดีที่สุด เหมาะสำหรับผู้ที่ต้องการรองรับการทรงตัวลดอาการล้ม 2.MTใช้พลังงานไฟฟ้า สะดวกสำหรับผู้ใช้ที่ไม่ค่อยมีแรง 3.ข้อจำกัดคือกลุ่มทดลองไม่ใช่ผู้ป่วยจริง และทดลองระยะสั้น",
+    "ข้อจำกัดของโครงงาน": "1.กลุ่มทดลองไม่ได้เป็นผู้ป่วยพาร์กินสันจริง 2.การทดลองมีระยะเวลาสั้น 3.อาจไม่สะท้อนผลในระยะยาวหรือผลที่เกิดกับผู้ป่วยจริง 100%",
+    "ข้อดีของMT": "ใช้พลังงานไฟฟ้ากระตุ้นการขึ้นลงของรองเท้าแบบอัตโนมัติ สะดวกสำหรับผู้ใช้งานที่ไม่ค่อยมีแรง",
+    "ข้อจำกัดที่สำคัญ": "กลุ่มทดลองไม่ใช่ผู้ป่วยจริงและทดลองเพียง 1 สัปดาห์ต่อรุ่น",
+
+
+    // ============ 24. ข้อเสนอแนะ ============
+    "ข้อเสนอแนะ": "1.ควรทดลองกับผู้ป่วยพาร์กินสันจริงภายใต้การควบคุมของแพทย์และนักกายภาพบำบัด 2.พัฒนาระบบอัจฉริยะเช่นเซนเซอร์ตรวจจับการเคลื่อนไหวเพื่อปรับแรงต้านอัตโนมัติ 3.ผลิตในรูปแบบเหมาะกับกิจกรรมศาสนา 4.ส่งเสริมการผลิตแบบ SME หรือชุมชนเพื่อลดต้นทุน",
+    "แนวทางต่อยอด": "ทดลองกับผู้ป่วยจริง, พัฒนาระบบอัจฉริยะด้วยเซนเซอร์, ออกแบบให้เหมาะกับกิจกรรมศาสนา, ผลิตแบบ SME/ชุมชน",
+    "ควรพัฒนาอะไรต่อ": "เพิ่มเซนเซอร์ตรวจจับการเคลื่อนไหวหรือแรงกด เพื่อปรับแรงต้านให้เหมาะสมแบบอัตโนมัติ",
+    "ระบบอัจฉริยะที่ควรเพิ่ม": "การใช้เซนเซอร์ตรวจจับการเคลื่อนไหวหรือแรงกด เพื่อปรับแรงต้านให้เหมาะสมแบบอัตโนมัติ",
+    "ควรผลิตอย่างไร": "ส่งเสริมการผลิตแบบ SME หรือชุมชน เพื่อสร้างรายได้และลดต้นทุนให้เข้าถึงได้ง่าย",
+    "ควรทดลองกับผู้ป่วยจริงไหม": "ใช่ ควรทดลองกับผู้ป่วยพาร์กินสันจริง ภายใต้การควบคุมของแพทย์และนักกายภาพบำบัด",
+    "รองเท้าใช้กับกิจกรรมศาสนาได้ไหม": "ได้ ควรพัฒนาให้เหมาะสมกับกิจกรรมศาสนา เช่น การละหมาด เพื่อช่วยผู้สูงอายุในชุมชนมุสลิม",
+
+
+    // ============ 25. กิจกรรมที่ประยุกต์ใช้ได้ ============
+    "ใช้กับกิจกรรมอะไรได้บ้าง": "การละหมาด, การนั่งอ่านอัลกุรอาน, การทำฮาลาเกาะ และกิจกรรมทางกายอื่นๆ",
+    "รองเท้าช่วยละหมาดได้ไหม": "ใช่ ช่วยให้ผู้สูงอายุทรงตัวได้ดีขึ้นขณะละหมาด",
+    "รองเท้าช่วยอ่านอัลกุรอานได้ไหม": "ใช่ ช่วยให้นั่งทรงตัวได้มั่นคงขณะนั่งอ่านอัลกุรอาน",
+    "ฮาลาเกาะคืออะไร": "การทำฮาลาเกาะเป็นกิจกรรมศาสนาของชุมชนมุสลิม รองเท้านวัตกรรมช่วยให้ทำกิจกรรมนี้ได้ดีขึ้น",
+    "กิจกรรมศาสนาที่รองเท้าช่วย": "การละหมาด การนั่งอ่านอัลกุรอาน การทำฮาลาเกาะ",
+
+
+    // ============ 26. งานวิจัยที่เกี่ยวข้อง ============
+    "งานวิจัยที่เกี่ยวข้อง": "1.Popovic et al. (2019) ใช้อุปกรณ์สวมใส่มีระบบหน่วงการเคลื่อนไหวด้วยแรงต้านเพื่อเพิ่มเสถียรภาพมือ 2.Pathak et al. (2021) ศึกษาใช้เซนเซอร์ตรวจจับความเคลื่อนไหวมือและใช้ AI วิเคราะห์ลดอาการสั่น",
+    "Popovic2019": "นำเสนอการใช้อุปกรณ์สวมใส่ที่มีระบบหน่วงการเคลื่อนไหวด้วยแรงต้าน เพื่อเพิ่มเสถียรภาพของมือในขณะใช้งาน",
+    "Pathak2021": "ศึกษาการใช้เซนเซอร์ตรวจจับความเคลื่อนไหวของมือและใช้ระบบปัญญาประดิษฐ์เพื่อวิเคราะห์และลดอาการสั่น",
+    "สิทธิบัตรที่เกี่ยวข้อง": "1.US10238588B2: ถุงมือที่มีระบบมอเตอร์ภายในลดแรงสั่นมือผู้ป่วยพาร์กินสัน 2.US9876543B1: ใช้ไจโรสโคปในถุงมือตรวจจับความเคลื่อนไหวผิดปกติและปรับสมดุลอัตโนมัติ",
+    "US10238588B2": "สิทธิบัตรถุงมือที่มีระบบมอเตอร์ภายใน ออกแบบมาเพื่อลดแรงสั่นในมือของผู้ป่วยพาร์กินสันโดยใช้มอเตอร์ช่วยต้านแรงสั่นสะเทือน",
+    "US9876543B1": "สิทธิบัตรที่ใช้ไจโรสโคป (Gyroscope) ในถุงมือเพื่อตรวจจับความเคลื่อนไหวผิดปกติและปรับสมดุลของมืออัตโนมัติ",
+    "Gyroscopeใช้ทำอะไร": "ใช้ตรวจจับความเคลื่อนไหวผิดปกติและปรับสมดุลอัตโนมัติ (จากสิทธิบัตร US9876543B1)",
+
+
+    // ============ 27. แหล่งบรรดาลใจ ============
+    "แหล่งบรรดาลใจ": "ได้รับแรงบรรดาลใจจากอุปกรณ์แท่นยืนกดจุดฝ่าเท้า แล้วนำมาต่อยอดให้เหมาะสมกับกลุ่มเป้าหมายที่เริ่มมีความบกพร่องด้านการเดิน การทรงตัว และความมั่นคงของกล้ามเนื้อ",
+    "ที่มาของแนวคิด": "จากอุปกรณ์แท่นยืนกดจุดฝ่าเท้า นำมาต่อยอดเป็นรองเท้าสวมใส่ได้สำหรับผู้ป่วยพาร์กินสัน",
+    "คิดค้นมาจากอะไร": "อุปกรณ์แท่นยืนกดจุดฝ่าเท้า",
+
+
+    // ============ 28. ฮะดิษที่อ้างอิง ============
+    "ฮะดิษที่อ้างอิง": "ฮะดิษจากอบูฮุรอยเราะห์ รายงานโดยมุสลิม: 'มุมีนที่มีร่างกายแข็งแรงเป็นที่รักและดีกว่ามุมีนที่อ่อนแอ'",
+    "คำพูดที่อ้างอิง": "มุมีนที่มีร่างกายแข็งแรงเป็นที่รักและดีกว่ามุมีนที่อ่อนแอ (ฮะดิษ รายงานโดยมุสลิม)",
+    "ฮะดิษเกี่ยวกับร่างกายแข็งแรง": "มุมีนที่มีร่างกายแข็งแรงเป็นที่รักและดีกว่ามุมีนที่อ่อนแอ จากฮะดิษที่รายงานโดยมุสลิม",
+    "ความเกี่ยวข้องของฮะดิษกับโครงงาน": "ฮะดิษสนับสนุนว่าการมีร่างกายแข็งแรงเป็นสิ่งที่ดี จึงต้องมีการกายภาพบำบัดเพื่อเพิ่มสมรรถภาพร่างกายแก่ผู้ป่วย",
+
+
+    // ============ 29. ผลประโยชน์ ============
+    "ผลประโยชน์ของรองเท้า": "ช่วยเพิ่มความมั่นใจในการเดิน ลดความกลัวการล้ม ลดอาการ FOG เพิ่มความมั่นคงในการทรงตัว สามารถนำไปใช้ในกิจกรรมทางกายและศาสนา",
+    "รองเท้ามีประโยชน์อย่างไร": "ช่วยเพิ่มความมั่นใจในการเดิน ลดกลัวการล้ม ใช้ได้ในชีวิตประจำวัน เช่น ละหมาด อ่านอัลกุรอาน ทำฮาลาเกาะ",
+    "ช่วยอะไรได้บ้าง": "เพิ่มความสามารถทรงตัว ลดอาการล้ม เสริมสร้างสมรรถภาพทางกาย ลดอาการ FOG เพิ่มความมั่นใจ",
+
+
+    // ============ 30. ข้อมูลอ้างอิง ============
+    "เอกสารอ้างอิง": "1.โรงพยาบาลบำรุงราษฎร์ - โรคพาร์กินสัน 2.Rantanen (2013) - Promoting mobility in older people 3.จุฬพร เกื้อหนุนพิทักษ์ (2564) - การออกกำลังกายสำหรับผู้สูงอายุ 4.กรมการแพทย์แผนไทย - การนวดกดจุดสะท้อนเท้า 5.กรมอนามัย - รายงานการวิจัยส่งเสริมกิจกรรมทางกายผู้สูงอายุ 6.Maneeratana et al. (2023) - Development of a care model for Parkinson's patients",
+    "อ้างอิงจากไหนบ้าง": "โรงพยาบาลบำรุงราษฎร์, วารสาร Journal of Preventive Medicine and Public Health, ศูนย์ส่งเสริมผู้สูงอายุ มหิดล, กรมการแพทย์แผนไทย, กรมอนามัย, โรงพยาบาลเชียงใหม่นิวโรโลจิคัล",
+    "Rantanen2013": "Promoting mobility in older people ตีพิมพ์ใน Journal of Preventive Medicine and Public Health",
+    "จุฬพร เกื้อหนุนพิทักษ์": "เขียนเรื่อง 'การออกกำลังกายสำหรับผู้สูงอายุ' จากศูนย์ส่งเสริมและพัฒนาแหล่งเรียนรู้ด้านสุขภาวะผู้สูงอายุ มหาวิทยาลัยมหิดล",
+    "Maneeratana2023": "Development of a care model for patients with Parkinson's disease at Chiang Mai Neurological Hospital",
+
+
+    // ============ 31. คำถามทั่วไปเพิ่มเติม ============
+    "รองเท้าตัวนี้ใช้ยาไหม": "ไม่ใช่ ใช้หลักการกายภาพบำบัดด้วยแรงกล (สปริงหรือมอเตอร์) ไม่ใช้ยา",
+    "ต้องกินยาไหม": "ไม่จำเป็น รองเท้านี้เป็นอุปกรณ์กายภาพบำบัด ไม่เกี่ยวข้องกับยา",
+    "ใช้ไฟมากไหม": "รุ่น KX600 และ KX1600 ไม่ใช้ไฟ รุ่น MT ใช้ไฟ 12V ผ่านอแด็ปเตอร์เสียบปลั๊ก 220V",
+    "ต้องชาร์จไหม": "รุ่น MT ใช้ไฟตรงผ่านอแด็ปเตอร์ ไม่ต้องชาร์จ รุ่น KX ไม่ใช้ไฟเลย",
+    "ราคาเท่าไหร่": "โครงงานนี้ยังเป็นต้นแบบ ยังไม่มีการกำหนดราคาจำหน่าย แต่มีข้อเสนอแนะให้ส่งเสริมผลิตแบบ SME/ชุมชนเพื่อลดต้นทุน",
+    "ซื้อได้ที่ไหน": "ยังเป็นต้นแบบ ยังไม่มีจำหน่ายในท้องตลาด",
+    "ขายไหม": "ยังไม่มีจำหน่าย อยู่ในระยะต้นแบบ",
+    "ใช้กับคนอื่นได้ไหม": "สามารถใช้กับผู้สูงอายุทั่วไปที่มีปัญหาด้านการทรงตัว ไม่จำกัดเฉพาะผู้ป่วยพาร์กินสัน",
+    "ใช้กับเด็กได้ไหม": "โครงงานนี้ออกแบบสำหรับผู้ป่วยพาร์กินสันและผู้สูงอายุ ไม่ได้ทดสอบกับเด็ก",
+    "ใช้กับคนหนุ่มสาวได้ไหม": "ออกแบบมาสำหรับผู้ป่วยพาร์กินสันระยะ 1-3 และผู้สูงอายุ ไม่ได้ออกแบบสำหรับคนหนุ่มสาวทั่วไป",
+    "มีอันตรายไหม": "เป็นนวัตกรรมที่ออกแบบให้ปลอดภัย แต่ควรใช้ภายใต้คำแนะนำของนักกายภาพบำบัด",
+    "สวมใส่สบายไหม": "จากผลการทดลอง ผู้ใช้งานให้ความพึงพอใจในระดับดีถึงดีมาก",
+    "หนักไหม": "รุ่น KX ใช้สปริงเบา รุ่น MT มีกล่องควบคุมแยก น้ำหนักยังอยู่ในขอบเขตที่เหมาะสม",
+    "ใส่เล่นได้ไหม": "รองเท้านี้ออกแบบเพื่อกายภาพบำบัด ไม่ใช่รองเท้าใส่เล่นทั่วไป",
+    "ต้องใส่ทั้งคู่ไหม": "ใช่ ทั้งสองข้างทำเหมือนกัน",
+    "ใส่ข้างเดียวได้ไหม": "ออกแบบมาให้สวมใส่ทั้งคู่ เพื่อสมดุลการทรงตัว",
+    "ทำจากอะไร": "รองเท้าแตะ, สปริง/มอเตอร์, foam material, เคเบิ้ลไทร์, เชือกแรงต้าน, เชือกผ้าใบ",
+    "ทำเองได้ไหม": "สามารถทำได้ตามขั้นตอนที่ระบุในโครงงาน โดยใช้วัสดุที่หาได้ทั่วไป",
+    "ใช้เวลาทำนานเท่าไหร่": "โครงงานไม่ระบุระยะเวลาการสร้างโดยเฉพาะ",
+    "ได้รับรางวัลไหม": "โครงงานนี้ไม่ระบุว่าได้รับรางวัล",
+    "นำเสนอที่ไหน": "โครงงานนี้จัดทำโดยโรงเรียนอัตตรักียะห์อิสลามียะห์ จังหวัดนราธิวาส",
+    "ปีการศึกษาไหน": "โครงงานไม่ระบุปีการศึกษาโดยเฉพาะ",
+    "ทำที่ไหน": "โรงเรียนอัตตรักียะห์อิสลามียะห์ ถนนตรีรัตน์ ตำบลบางนาค อำเภอเมือง จังหวัดนราธิวาส",
+    "จะนำไปพัฒนาต่ออย่างไร": "ตามข้อเสนอแนะ: ทดลองกับผู้ป่วยจริง, เพิ่มเซนเซอร์อัจฉริยะ, ออกแบบให้เหมาะกิจกรรมศาสนา, ผลิตแบบ SME",
+
+
+    // ============ 32. คำถามเชิงเปรียบเทียบ ============
+    "KX600เทียบกับKX1600": "KX600 ใช้สปริง 250 N/m รับน้ำหนัก >=30kg ได้ 4.3 คะแนน / KX1600 ใช้สปริง 550 N/m รับน้ำหนัก >=75kg ได้ 4.5 คะแนน — KX1600 ดีกว่า",
+    "KXเทียบกับMT": "KX ใช้แรงสปริง ต้องออกแรงเอง / MT ใช้มอเตอร์ไฟฟ้า อัตโนมัติ สะดวกกว่าสำหรับคนแรงน้อย ได้คะแนนสูงกว่า",
+    "สปริงกับมอเตอร์อันไหนดีกว่า": "จากผลทดลอง รุ่นมอเตอร์ (MT) ได้คะแนนสูงสุด 4.7 ดีกว่ารุ่นสปริง",
+    "250N/mกับ550N/mต่างกันอย่างไร": "250 N/m ใช้กับ KX600 สำหรับคนน้ำหนักน้อย >=30kg / 550 N/m ใช้กับ KX1600 สำหรับคนน้ำหนักมาก >=75kg สปริง 550 แข็งแรงกว่า",
+    "พาร์กินสันกับอัลไซเมอร์ต่างกันอย่างไร": "โรคพาร์กินสันพบบ่อยรองเป็นอันดับ 2 รองจากอัลไซเมอร์ พาร์กินสันมีอาการสั่น เดินลำบาก ก้าวขาไม่ออก ส่วนอัลไซเมอร์เป็นโรคเสื่อมสมองด้านความจำ",
+
+
+    // ============ 33. คำถามเชิงลึก ============
+    "ทำไมสปริงช่วยเดินได้": "เพราะเมื่อผู้สวมใส่ลงน้ำหนัก สปริงยุบตัวเก็บพลังงานศักย์ยืดหยุ่น เมื่อยกเท้าขึ้น สปริงคืนตัวส่งแรงดันกลับช่วยยกเท้า ตามกฎของฮุก",
+    "ทำไมต้องมี5ระดับแรงต้าน": "เพื่อให้สามารถปรับระดับแรงต้านให้เหมาะสมกับความสามารถและน้ำหนักของผู้ใช้งานแต่ละคน",
+    "ทำไมต้องใช้foam": "Foam material วางใต้ฝ่าเท้าเพื่อเพิ่มความสบาย รองรับแรงกด และกระจายน้ำหนัก",
+    "ทำไมต้องเจาะรู3รู": "เพื่อติดตั้งสปริง 3 อัน ในตำแหน่งที่เหมาะสมบริเวณสันรองเท้าเพื่อรองรับการกดและยกตัว",
+    "ทำไมMTต้องใช้มอเตอร์ปัดน้ำฝน": "เพราะมอเตอร์ปัดน้ำฝนมีคุณสมบัติให้แรงบิตสูงในรอบต่ำ เหมาะกับงานที่ต้องการแรงแต่ไม่ต้องการความเร็ว",
+    "ทำไมต้องใช้PWM": "PWM ใช้ควบคุมความเร็วรอบของมอเตอร์ เพื่อปรับความเร็วการกดขึ้น-ลงของรองเท้าให้เหมาะสม",
+    "ทำไมต้องใช้เคเบิ้ลไทร์": "เพื่อยึดสปริงให้แน่นหนาบริเวณรูที่เจาะ ใช้ 3 เส้นต่อสปริง 1 อันเพื่อความมั่นคง",
+    "ทำไมต้องผ่าส้นรองเท้า": "เพื่อสร้างช่องสำหรับติดตั้งสปริงและระบบแรงต้านในส่วนส้นเท้า",
+    "ทำไมผู้สูงอายุเดินช้า": "เนื่องจากความเสื่อมของระบบกล้ามเนื้อและกระดูก กล้ามเนื้ออ่อนแรง ซึ่งลักษณะคล้ายผู้ป่วยพาร์กินสันระยะต้น",
+    "ทำไมต้องกายภาพบำบัด": "เพื่อเพิ่มสมรรถภาพร่างกาย ตามฮะดิษที่ว่ามุมีนที่มีร่างกายแข็งแรงดีกว่ามุมีนที่อ่อนแอ",
+
+
+    // ============ 34. ข้อมูลเฉพาะทางเพิ่มเติม ============
+    "แรงต้านคืออะไร": "แรงที่ต้านการเคลื่อนไหว ในรองเท้านี้ใช้เพื่อกระตุ้นกล้ามเนื้อให้ทำงานมากขึ้น",
+    "แรงบิตคืออะไร": "แรงบิต (Torque) คือแรงหมุน มอเตอร์ปัดน้ำฝนให้แรงบิตสูงในรอบต่ำ เหมาะกับการกดรองเท้า",
+    "โมดูลัสแรงเฉือนคืออะไร": "ค่า G ในสูตรคำนวณค่าคงที่สปริง หมายถึงค่าคงที่ที่บ่งบอกความยืดหยุ่นของวัสดุต่อแรงเฉือน",
+    "ค่าคงที่สปริงคืออะไร": "ค่า k ที่บ่งบอกถึงความแข็งของสปริง ยิ่งค่าสูง สปริงยิ่งแข็ง คำนวณจาก k = Gd⁴/(8D³N)",
+    "พิสัยการเคลื่อนไหวคืออะไร": "ขอบเขตการเคลื่อนที่ของร่างกาย โครงงานนี้วัดพิสัยการเคลื่อนไหวก่อนและหลังใช้รองเท้า",
+    "การถ่ายเทน้ำหนักคืออะไร": "การโอนย้ายน้ำหนักจากขาหนึ่งไปอีกขาหนึ่งขณะเดิน ผู้ป่วยพาร์กินสันมักทำได้ลำบาก",
+    "การทรงตัวคืออะไร": "ความสามารถในการรักษาจุดศูนย์ถ่วงของร่างกายให้คงที่ ผู้ป่วยพาร์กินสันมักมีปัญหาด้านนี้",
+    "สมรรถภาพทางกายคืออะไร": "ความสามารถของร่างกายในการทำกิจกรรมต่างๆ โครงงานนี้วัดความสามารถในการออกแรงเป็นตัวชี้วัด",
+    "Physical fitness test": "การทดสอบสมรรถภาพทางกาย ในโครงงานนี้วัดความสามารถในการออกแรง",
+    "Physiological characteristics": "ลักษณะทางสรีรวิทยา ในโครงงานนี้เก็บข้อมูลเพศและน้ำหนัก",
+
+
+    // ============ 35. คำถามเกี่ยวกับโรงเรียนเพิ่มเติม ============
+    "โรงเรียนอัตตรักียะห์อิสลามียะห์อยู่ที่ไหน": "ถนนตรีรัตน์ ตำบลบางนาค อำเภอเมือง จังหวัดนราธิวาส 96000",
+    "โทรโรงเรียน": "0-7351-1292",
+    "แฟกซ์โรงเรียน": "0-7351-3246",
+
+
+    // ============ 36. คำถามรอบคอบ ============
+    "โครงงานนี้สำเร็จไหม": "สำเร็จลุล่วงได้ดี",
+    "ผลโครงงานออกมาดีไหม": "ดี รุ่น MT ได้คะแนนสูงสุด 4.7 คะแนน รุ่นอื่นก็ได้คะแนนดี",
+    "มีข้อบกพร่องไหม": "มีข้อจำกัดคือ กลุ่มทดลองไม่ใช่ผู้ป่วยจริงและทดลองระยะสั้น แต่ไม่ใช่ข้อบกพร่องของตัวนวัตกรรม",
+    "จะนำไปใช้จริงได้ไหม": "มีความเป็นไปได้ แต่ควรทดลองกับผู้ป่วยพาร์กินสันจริงภายใต้การควบคุมของแพทย์ก่อน",
+    "ถ้าอยากได้ต้องทำอะไร": "รอการพัฒนาต่อยอดหรือติดต่อทีมผู้จัดทำ/โรงเรียนอัตตรักียะห์อิสลามียะห์",
+    "มีคู่แข่งไหม": "มีสิทธิบัตรที่เกี่ยวข้อง เช่น ถุงมือลดแรงสั่น (US10238588B2, US9876543B1) แต่เป็นถุงมือ ไม่ใช่รองเท้า",
+    "แตกต่างจากถุงมือลดสั่นอย่างไร": "รองเท้านี้เน้นการช่วยทรงตัวและการเดิน ส่วนถุงมือเน้นลดอาการสั่นของมือ จุดประสงค์และกลไกต่างกัน",
+
+
+    // ============ 37. ต้นแบบรุ่นBL (รุ่นแรก) ============
+    "รุ่นBLคืออะไร": "รุ่นต้นแบบแรก ใช้รองเท้าแตะ เชือกแรงต้าน 5 ระดับ foam material ที่ตัดหลัง และบอลลูน",
+    "วัสดุของBL": "รองเท้าแตะ 1 คู่, เชือกแรงต้าน 5 ระดับ, Foam material, ที่ตัดหลัง, บอลลูน",
+    "ทำไมไม่ใช้รุ่นBLในการทดลอง": "รุ่น BL เป็นรุ่นต้นแบบเบื้องต้น มีการพัฒนาต่อเป็นรุ่น KX600, KX1600 และ MT ที่มีประสิทธิภาพดีกว่า",
+
+
+    // ============ 38. ภาพประกอบ ============
+    "มีภาพประกอบไหม": "มี ภาพต้นแบบของรุ่น MT 4 ภาพ และรุ่น KX600 และ KX1600 4 ภาพ รวม 8 ภาพ และภาพทดสอบการใช้กับผู้ใช้งานจริง",
+    "ภาพทดสอบ": "มีภาพแสดงการทดสอบประสิทธิภาพการใช้งานจริงจากผู้สูงอายุ 3 ภาพ",
+    "ภาพต้นแบบMT": "มี 4 ภาพ แสดงรายละเอียดรุ่น MT ที่เป็นรุ่นต่อยอด",
+    "ภาพต้นแบบKX": "มี 4 ภาพ แสดงรายละเอียดรุ่น KX600 และ KX1600 ที่เป็นรุ่นก่อนหน้า",
+
+
+    // ============ 39. กิตติกรรมประกาศ ============
+    "กิตติกรรมประกาศ": "ขอบคุณอาจารย์อาหะมะ เจ๊ะมะ อาจารย์ที่ปรึกษาโครงงาน และอาจารย์สุฟรีย์ สาแม อาจารย์ที่ปรึกษาพิเศษ คณะอาจารย์ และโรงเรียนอัตตรักียะห์อิสลามียะห์ ที่ให้ความสนับสนุน",
+    "ขอบคุณใคร": "อาจารย์อาหะมะ เจ๊ะมะ, อาจารย์สุฟรีย์ สาแม, คณะอาจารย์ และโรงเรียนอัตตรักียะห์อิสลามียะห์",
+
+
+    // ============ 40. คำถาม YES/NO ============
+    "รองเท้าช่วยผู้ป่วยพาร์กินสันได้จริงไหม": "ใช่ จากผลการทดลอง รองเท้าช่วยเพิ่มความมั่นใจในการเดิน ลดความกลัวการล้ม และลดอาการ FOG",
+    "รุ่นMTดีกว่าKXไหม": "ใช่ รุ่น MT ได้คะแนน 4.7 สูงกว่า KX600 (4.3) และ KX1600 (4.5)",
+    "โครงงานนี้เกี่ยวกับพาร์กินสันใช่ไหม": "ใช่ โครงงานนี้เกี่ยวกับนวัตกรรมรองเท้ากายภาพบำบัดสำหรับผู้ป่วยพาร์กินสัน",
+    "ทดลองกับผู้ป่วยจริงไหม": "ไม่ใช่ ทดลองกับผู้สูงอายุทั่วไป 3 คน ที่มีลักษณะใกล้เคียงผู้ป่วยพาร์กินสันระยะต้น",
+    "ใช้สปริงไหม": "ใช่ รุ่น KX600 และ KX1600 ใช้สปริง รุ่น MT ใช้มอเตอร์",
+    "ใช้มอเตอร์ไหม": "ใช่ รุ่น MT ใช้มอเตอร์ DC 12V 30W",
+    "มี3รุ่นไหม": "ใช่ มี 3 รุ่น คือ KX600, KX1600 และ MT",
+    "ผู้จัดทำ3คนไหม": "ใช่ นายบาฆอรี เจ๊ะหะ, นางสาวบุศรา สะมะแอ, นางสาวอารียา ดือเลาะ",
+    "มีอาจารย์ที่ปรึกษา2ท่านไหม": "ใช่ นายอาหะมะ เจ๊ะมะ และ นายสุฟรีย์ สาแม",
+    "โรงเรียนอยู่นราธิวาสไหม": "ใช่ โรงเรียนอัตตรักียะห์อิสลามียะห์ อำเภอเมือง จังหวัดนราธิวาส",
+    "เรียนม.6ไหม": "ใช่ ผู้จัดทำเป็นนักเรียนชั้นมัธยมศึกษาปีที่ 6",
+    "เป็นโครงงานสิ่งประดิษฐไหม": "ใช่ เป็นโครงงานวิทยาศาสตร์ประเภทสิ่งประดิษฐ",
+    "FOGเป็นอาการพาร์กินสันไหม": "ใช่ FOG (Freezing of Gait) เป็นอาการหนึ่งของโรคพาร์กินสัน",
+    "ใช้กฎฮุกไหม": "ใช่ กลไกของรุ่น KX อ้างอิงตามกฎของฮุก (F = -kx)",
+    "มีกราฟไหม": "ใช่ มีกราฟแท่งแสดงความพึงพอใจเปรียบเทียบ 3 รุ่น",
+    "มีแบบประเมินไหม": "ใช่ มีแบบประเมินก่อนและหลังใช้งาน",
+    "ผู้สูงอายุคล้ายพาร์กินสันไหม": "ใช่ ผู้สูงอายุหลายรายมีลักษณะการเคลื่อนไหวคล้ายผู้ป่วยพาร์กินสันระยะต้น",
+    "มีภาคผนวกไหม": "ใช่ มีภาคผนวกแสดงภาพทดสอบการใช้กับผู้ใช้งานจริง",
+    "อ้างอิงฮะดิษไหม": "ใช่ อ้างอิงฮะดิษจากอบูฮุรอยเราะห์ รายงานโดยมุสลิม",
+    "มีเอกสารอ้างอิงไหม": "ใช่ มี 6 รายการอ้างอิง",
+
+
+    // เก็บค่าเริ่มต้นเดิมไว้
+    "1+1": "2",
+    "-4+2": "2",
+    "แบยีติวให้ก่อตั้งปีใหน": "วันที่ 4 เดือนพฤษภาคม พ.ศ.2569",
+    "ชื่อแอปนี้คืออะไร": "แอป AI ต้นแบบของแบยี"
 };
 
-/* ===== ตัวแปร ===== */
-let db = null, firebaseReady = false;
-let currentTheme = 'dark', currentUser = null, isBlocked = false, blockEndTime = null;
-let badWordCount = 0, isGenerating = false, currentModel = 'my-ai';
+
+
+
+// =====================================================
+// ฐานคำถามคล้าย (aiSynonyms)
+
+
+    // 2. โหลดข้อมูลคำถามคล้าย (ฝังค่าเริ่มต้นไว้ในโค้ด)
+    let aiSynonyms = JSON.parse(localStorage.getItem('ai_syn')) || {
+       
+    // === ชื่อโครงงาน ===
+    "ชื่อโปรเจค": "ชื่อโครงงาน",
+    "ชื่อproject": "ชื่อโครงงาน",
+    "โปรเจคนี้": "โครงงานนี้เรื่องอะไร",
+    "projectนี้เรื่องอะไร": "โครงงานนี้เรื่องอะไร",
+    "หัวข้อ": "ชื่อโครงงาน",
+    "topic": "ชื่อโครงงาน",
+    "title": "ชื่อโครงงาน",
+    "ชื่อเรื่อง": "ชื่อโครงงาน",
+    "เรื่องอะไร": "โครงงานนี้เรื่องอะไร",
+    "ทำเรื่องอะไร": "โครงงานนี้เรื่องอะไร",
+    "โครงงานเกี่ยวกับอะไร": "โครงงานนี้เรื่องอะไร",
+    "เนื้อหา": "โครงงานนี้เรื่องอะไร",
+    "บอกชื่อโครงงานหน่อย": "ชื่อโครงงาน",
+    "ชื่อผลงาน": "ชื่อโครงงาน",
+    "ชื่อรายงาน": "ชื่อโครงงาน",
+
+
+    // === ผู้จัดทำ ===
+    "ใครทำ": "ใครจัดทำโครงงานนี้",
+    "ทำโดยใคร": "ใครจัดทำโครงงานนี้",
+    "ผู้ทำ": "ผู้จัดทำโครงงาน",
+    "ผู้จัดทำเป็นใคร": "ใครจัดทำโครงงานนี้",
+    "ทีม": "ทีมผู้จัดทำ",
+    "team": "ทีมผู้จัดทำ",
+    "สมาชิก": "สมาชิกกลุ่ม",
+    "มีใครบ้าง": "ผู้จัดทำโครงงาน",
+    "ใครร่วมทำ": "ใครจัดทำโครงงานนี้",
+    "คนทำ": "ผู้จัดทำโครงงาน",
+    "บาฆอรี": "บาฆอรี เจ๊ะหะ",
+    "บุศรา": "บุศรา สะมะแอ",
+    "อารียา": "อารียา ดือเลาะ",
+    "นายบาฆอรี": "บาฆอรี เจ๊ะหะ",
+    "นางสาวบุศรา": "บุศรา สะมะแอ",
+    "นางสาวอารียา": "อารียา ดือเลาะ",
+
+
+    // === อาจารย์ ===
+    "อาจารย์": "อาจารย์ที่ปรึกษา",
+    "ครู": "อาจารย์ที่ปรึกษา",
+    "ที่ปรึกษา": "อาจารย์ที่ปรึกษา",
+    "teacher": "อาจารย์ที่ปรึกษา",
+    "advisor": "อาจารย์ที่ปรึกษา",
+    "อาจารย์ที่ดูแล": "อาจารย์ที่ปรึกษา",
+    "ใครเป็นที่ปรึกษา": "ใครเป็นอาจารย์ที่ปรึกษา",
+    "มีอาจารย์ที่ปรึกษาใคร": "อาจารย์ที่ปรึกษา",
+    "อาหะมะ": "อาหะมะ เจ๊ะมะ",
+    "สุฟรีย์": "สุฟรีย์ สาแม",
+    "นายอาหะมะ": "อาหะมะ เจ๊ะมะ",
+    "นายสุฟรีย์": "สุฟรีย์ สาแม",
+
+
+    // === โรงเรียน ===
+    "โรงเรียนอะไร": "โรงเรียน",
+    "เรียนที่ไหน": "โรงเรียนอะไร",
+    "school": "โรงเรียน",
+    "อยู่ที่ไหน": "ที่อยู่โรงเรียน",
+    "ตั้งอยู่ที่ไหน": "ที่อยู่โรงเรียน",
+    "ที่อยู่": "ที่อยู่โรงเรียน",
+    "address": "ที่อยู่โรงเรียน",
+    "เบอร์โทร": "โทรศัพท์โรงเรียน",
+    "เบอร์โรงเรียน": "โทรศัพท์โรงเรียน",
+    "โทรศัพท์": "โทรศัพท์โรงเรียน",
+    "tel": "โทรศัพท์โรงเรียน",
+    "โทร": "โทรศัพท์โรงเรียน",
+    "แฟกซ์": "โทรสารโรงเรียน",
+    "fax": "โทรสารโรงเรียน",
+    "จังหวัดอะไร": "อยู่จังหวัดอะไร",
+    "province": "อยู่จังหวัดอะไร",
+    "อำเภออะไร": "อยู่อำเภออะไร",
+    "ตำบลอะไร": "ตำบล",
+    "รหัสไปรษณีย์เท่าไหร่": "รหัสไปรษณีย์",
+    "zip": "รหัสไปรษณีย์",
+    "postcode": "รหัสไปรษณีย์",
+    "ชั้นอะไร": "เรียนชั้นอะไร",
+    "มัธยมปีที่เท่าไหร่": "เรียนชั้นอะไร",
+    "grade": "เรียนชั้นอะไร",
+    "ม.ปีที่เท่าไหร่": "เรียนชั้นอะไร",
+
+
+    // === พาร์กินสัน ===
+    "Parkinson's": "พาร์กินสันคืออะไร",
+    "Parkinson": "พาร์กินสันคืออะไร",
+    "PD": "พาร์กินสันคืออะไร",
+    "โรคPD": "พาร์กินสันคืออะไร",
+    "รู้จักพาร์กินสันไหม": "พาร์กินสันคืออะไร",
+    "บอกเกี่ยวกับพาร์กินสันหน่อย": "อาการของโรคพาร์กินสัน",
+    "พาร์กินสันเป็นอย่างไร": "พาร์กินสันคืออะไร",
+    "สาเหตุพาร์กินสัน": "พาร์กินสันคืออะไร",
+    "โรคสมองชนิดนี้": "พาร์กินสันคืออะไร",
+    "โรคเสื่อมสมอง": "พาร์กินสันคืออะไร",
+
+
+    // === อาการ ===
+    "symptom": "อาการของโรคพาร์กินสัน",
+    "อาการมีอะไรบ้าง": "อาการพาร์กินสันมีอะไรบ้าง",
+    "มีอาการอะไร": "อาการพาร์กินสันมีอะไรบ้าง",
+    "สัญญาณพาร์กินสัน": "อาการของโรคพาร์กินสัน",
+    "signs of Parkinson": "อาการของโรคพาร์กินสัน",
+    "มือสั่นคืออะไร": "อาการสั่น",
+    "ตัวสั่น": "อาการสั่น",
+    "เดินยาก": "ผู้ป่วยพาร์กินสันเดินยากไหม",
+    "เดินลำบาก": "ผู้ป่วยพาร์กินสันเดินยากไหม",
+    "ล้มง่าย": "ผู้ป่วยพาร์กินสันเสี่ยงอะไร",
+    "หกล้ม": "ผู้ป่วยพาร์กินสันเสี่ยงอะไร",
+    "กลัวตก": "ผู้ป่วยพาร์กินสันเสี่ยงอะไร",
+    "กล้ามเนื้อแข็ง": "อาการของโรคพาร์กินสัน",
+    "กล้ามเนื้อเกร็ง": "อาการของโรคพาร์กินสัน",
+
+
+    // === FOG ===
+    "freeze": "FOG คืออะไร",
+    "freezing": "FOG คืออะไร",
+    "frozen": "FOG คืออะไร",
+    "ติด": "เท้าล็อกกับพื้น",
+    "เท้าติด": "เท้าล็อกกับพื้น",
+    "frozen gait": "FOG คืออะไร",
+    "ลดfrozenได้ไหม": "รองเท้าช่วยลดFOGได้ไหม",
+    "ช่วยfrozenได้ไหม": "รองเท้าช่วยลดFOGได้ไหม",
+    "ลดfreezeได้ไหม": "รองเท้าช่วยลดFOGได้ไหม",
+
+
+    // === ระยะโรค ===
+    "stage1": "ระยะที่1",
+    "stage2": "ระยะที่2",
+    "stage3": "ระยะที่3",
+    "ระยะต้น": "พาร์กินสันระยะต้น",
+    "early stage": "พาร์กินสันระยะต้น",
+    "ระยะไหนที่ช่วยได้": "รองเท้านี้ช่วยผู้ป่วยระยะไหน",
+    "ช่วยstageไหน": "รองเท้านี้ช่วยผู้ป่วยระยะไหน",
+    "ช่วยphaseไหน": "รองเท้านี้ช่วยผู้ป่วยระยะไหน",
+
+
+    // === วัตถุประสงค์ ===
+    "objective": "วัตถุประสงค์ของโครงงาน",
+    "จุดประสงค์": "วัตถุประสงค์ของโครงงาน",
+    "purpose": "วัตถุประสงค์ของโครงงาน",
+    "goal": "เป้าหมายของโครงงาน",
+    "เป้าหมาย": "เป้าหมายของโครงงาน",
+    "ทำไมต้องทำ": "ทำไมต้องทำโครงงานนี้",
+    "ทำเพื่ออะไร": "ทำไมต้องทำโครงงานนี้",
+    "จะแก้ปัญหาอะไร": "ทำไมต้องทำโครงงานนี้",
+    "แก้ปัญหาอะไร": "ทำไมต้องทำโครงงานนี้"
+
+
+    };
+
+
+
+let pdfMemoryText = localStorage.getItem('ai_pdf') || "";
+
+/* ===== ตัวแปรแอป ===== */
+let currentTheme = 'dark', currentUser = null, isAdmin = false;
+let isBlocked = false, blockEndTime = null, badWordCount = 0, isGenerating = false;
 let chats = {}, activeChatId = null, chatCounter = 0;
 
 const BRAND_HTML = '<span class="p">แบยี</span><span class="r">ติวให้</span>';
+const ADMIN_USER = 'bayyee', ADMIN_PASS = '123456';
 
-let badWords = ['fuck','shit','ass','bitch','damn','crap','dick','bastard','ไอควาย','สัส','โคตร','แม่ง','เหี้ย','กู','มึง','ไอ้','หำ','จิ๋ม','เย็ด','กะหรี่','ดอกทอง','ผัว','เมีย','ai','kuy','mueng'];
+let badWords = ['fuck','shit','ass','bitch','damn','crap','dick','bastard','ไอควาย','สัส','โคตร','แม่ง','เหี้ย','กู','มึง','ไอ้','หำ','จิ๋ม','เย็ด','กะหรี่','ดอกทอง','kuy','mueng'];
 let roasts = [
-    'พิมพ์แบบนี้แล้วรู้สึกเท่เหรอ? น่าเสียดายที่ความคิดของคุณอยู่แค่ระดับนี้ อีกครั้งนึง บล็อก 5 นาที ไปฝึกใช้คำพูดให้เป็นมนุษย์ก่อนนะ',
+    'พิมพ์แบบนี้แล้วรู้สึกเท่เหรอ? น่าเสียดายที่ความคิดของคุณอยู่แค่ระดับนี้ อีกครั้งนึง บล็อก 5 นาที',
     'ว้าว... ฝีมือการใช้คำหยาบระดับประถมเลย ภูมิใจไหม? อีกรอบ บล็อก 5 นาที คุณไม่สมควรใช้บริการนี้',
-    'คุณคิดว่าพิมพ์คำหยาบจะทำให้คุณดูเก่งขึ้นเหรอ? ผิดครับ มันทำให้คุณดูโง่ลง อีกครั้ง บล็อก 5 นาที เตรียมตัวได้เลย',
-    'สุภาพบุรุษหรือสุภาพสตรีแท้ไม่พูดแบบนี้นะ คุณพิสูจน์แล้วว่าไม่ใช่ อีกรอบ บล็อก 5 นาที ไปเรียนมารยาทใหม่',
-    'คำพูดของคุณสะท้อนบุคลิกคุณออกมาดีมาก... แบบไม่ดีเลยสักนิด อีกครั้ง บล็อก 5 นาที นะ'
+    'คุณคิดว่าพิมพ์คำหยาบจะทำให้คุณดูเก่งขึ้นเหรอ? ผิดครับ มันทำให้คุณดูโง่ลง อีกครั้ง บล็อก 5 นาที',
+    'สุภาพบุรุษหรือสุภาพสตรีแท้ไม่พูดแบบนี้นะ คุณพิสูจน์แล้วว่าไม่ใช่ อีกรอบ บล็อก 5 นาที',
+    'คำพูดของคุณสะท้อนบุคลิกออกมาดีมาก... แบบไม่ดีเลยสักนิด อีกครั้ง บล็อก 5 นาที'
 ];
-const unknownResp = 'ขอโทษค่ะ ฉันคือโมเดลที่พึ่งพัฒนา ไม่ทราบข้อมูลเหล่านี้ แนะนำให้ไปหาแชทตัวอื่นนะคะ';
+const unknownResp = 'เนื่องจากเป็น AI ต้นแบบ ยังไม่มีข้อมูลนี้ในระบบ แอดมินสามารถเพิ่มความรู้ใหม่ได้ผ่านแผงควบคุม';
 
 /* ===== โลโก้ ===== */
-function logoHTML(size, withRings = false) {
+function logoHTML(size, withRings) {
     const inner = AI_LOGO_URL
-        ? `<img src="${AI_LOGO_URL}" alt="AI" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;">`
-        : `<i class="fas fa-robot" style="font-size:${Math.round(size * 0.42)}px;"></i>`;
+        ? '<img src="'+AI_LOGO_URL+'" alt="AI" style="width:'+size+'px;height:'+size+'px;border-radius:50%;object-fit:cover;">'
+        : '<i class="fas fa-robot" style="font-size:'+Math.round(size*.42)+'px;"></i>';
     if (withRings) {
-        return `<div class="logo-wrap" style="width:${size + 44}px;height:${size + 44}px;">
-            <div class="logo-ring"></div><div class="logo-ring"></div><div class="logo-ring"></div>
-            <div class="logo-core" style="width:${size}px;height:${size}px;">${inner}</div>
-        </div>`;
+        return '<div class="logo-wrap" style="width:'+(size+44)+'px;height:'+(size+44)+'px;"><div class="logo-ring"></div><div class="logo-ring"></div><div class="logo-ring"></div><div class="logo-core" style="width:'+size+'px;height:'+size+'px;">'+inner+'</div></div>';
     }
     return inner;
 }
-
 function initLogos() {
-    // ล็อกอิน — ใหญ่พร้อมวงแหวน
-    document.getElementById('loginLogoWrap').outerHTML = `<div class="login-logo" style="display:flex;justify-content:center;margin-bottom:1.6rem;">${logoHTML(100, true)}</div>`;
-    // ตัวละครวิ่ง
-    document.getElementById('rcHead').innerHTML = AI_LOGO_URL
-        ? `<img src="${AI_LOGO_URL}" alt="">`
-        : `<i class="fas fa-robot"></i>`;
+    document.getElementById('loginLogoWrap').outerHTML = '<div class="login-logo" style="display:flex;justify-content:center;margin-bottom:1.6rem;">'+logoHTML(100,true)+'</div>';
+    document.getElementById('rcHead').innerHTML = AI_LOGO_URL ? '<img src="'+AI_LOGO_URL+'" alt="">' : '<i class="fas fa-robot"></i>';
 }
 
-/* ===== Firebase ===== */
-function initFirebase() {
-    if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-        console.warn('Firebase ยังไม่ถูกตั้งค่า — ใช้ localStorage แทน');
-        return;
-    }
-    try {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-        firebaseReady = true;
-    } catch (e) {
-        console.error('Firebase init error:', e);
-    }
+/* ===== บันทึกฐานความรู้ ===== */
+function saveDB() {
+    localStorage.setItem('ai_db', JSON.stringify(aiKnowledge));
+    localStorage.setItem('ai_syn', JSON.stringify(aiSynonyms));
+    localStorage.setItem('ai_pdf', pdfMemoryText);
+    renderKnowledgeList();
+    renderSynonymList();
 }
 
-async function loadFromFirebase(email) {
-    if (!firebaseReady) return false;
-    try {
-        const doc = await db.collection('users').doc(email).get();
-        if (doc.exists) {
-            const d = doc.data();
-            chats = d.chats || {};
-            chatCounter = d.chatCounter || 0;
-            activeChatId = d.activeChatId || null;
-            badWordCount = d.badWordCount || 0;
-            if (d.blockUntil && Date.now() < d.blockUntil) {
-                isBlocked = true; blockEndTime = d.blockUntil;
-            }
-            return true;
-        }
-    } catch (e) { console.error('Load error:', e); }
-    return false;
+/* ===== บันทึก/โหลดข้อมูลแชท ===== */
+function saveLocal() {
+    if (currentUser) localStorage.setItem('ai_d_'+currentUser, JSON.stringify({chats,chatCounter,activeChatId,badWordCount,blockEndTime:isBlocked?blockEndTime:null}));
 }
-
-async function saveToFirebase() {
-    if (!firebaseReady || !currentUser) return;
-    try {
-        await db.collection('users').doc(currentUser).set({
-            chats, chatCounter, activeChatId, badWordCount,
-            blockUntil: isBlocked ? blockEndTime : null,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-    } catch (e) { console.error('Save error:', e); }
-}
-
-async function deleteChatFirebase(id) {
-    if (!firebaseReady || !currentUser) return;
-    try {
-        await db.collection('users').doc(currentUser).update({ [`chats.${id}`]: firebase.firestore.FieldValue.delete() });
-    } catch (e) { console.error('Delete chat error:', e); }
-}
-
-/* ===== localStorage fallback ===== */
-function saveLocal() { if (currentUser) localStorage.setItem('ai_d_' + currentUser, JSON.stringify({ chats, chatCounter, activeChatId, badWordCount, blockEndTime: isBlocked ? blockEndTime : null })); }
 function loadLocal() {
     if (!currentUser) return false;
-    const s = localStorage.getItem('ai_d_' + currentUser);
-    if (s) { try { const d = JSON.parse(s); chats = d.chats || {}; chatCounter = d.chatCounter || 0; activeChatId = d.activeChatId || null; badWordCount = d.badWordCount || 0; if (d.blockEndTime && Date.now() < d.blockEndTime) { isBlocked = true; blockEndTime = d.blockEndTime; } return true; } catch(e){} }
+    const s = localStorage.getItem('ai_d_'+currentUser);
+    if (s) { try { const d=JSON.parse(s); chats=d.chats||{}; chatCounter=d.chatCounter||0; activeChatId=d.activeChatId||null; badWordCount=d.badWordCount||0; if(d.blockEndTime&&Date.now()<d.blockEndTime){isBlocked=true;blockEndTime=d.blockEndTime;} return true; }catch(e){} }
     return false;
 }
 
 /* ===== ล็อกอิน ===== */
-async function handleLogin() {
-    const email = document.getElementById('loginEmail').value.trim();
+function handleLogin() {
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value.trim();
     const err = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
-    if (!email) { err.textContent = 'กรุณากรอกอีเมล'; return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'รูปแบบอีเมลไม่ถูกต้อง'; return; }
+    if (!u||!p) { err.textContent='กรุณากรอก Username และ Password'; return; }
 
-    btn.innerHTML = '<span class="spinner"></span>กำลังเข้าสู่ระบบ...';
-    btn.disabled = true;
-    err.textContent = '';
+    btn.innerHTML='<span class="spinner"></span>กำลังเข้าสู่ระบบ...';
+    btn.disabled=true; err.textContent='';
 
-    currentUser = email;
-    let loaded = false;
+    setTimeout(() => {
+        if (u===ADMIN_USER && p===ADMIN_PASS) {
+            isAdmin=true;
+        } else {
+            isAdmin=false;
+        }
 
-    // ลอง Firebase ก่อน
-    if (firebaseReady) {
-        loaded = await loadFromFirebase(email);
+        currentUser=u;
+        loadLocal();
+        localStorage.setItem('ai_user', u);
+
+        btn.innerHTML='<i class="fas fa-arrow-right" style="margin-right:8px;"></i>เข้าสู่ระบบ';
+        btn.disabled=false;
+
+        document.getElementById('loginOverlay').classList.add('hidden');
+        document.getElementById('app').classList.add('vis');
+        document.getElementById('uAv').textContent = u[0].toUpperCase();
+
+        if (isAdmin) document.getElementById('adminBtn').style.display='flex';
+        else document.getElementById('adminBtn').style.display='none';
+
+        renderChatList(); renderMessages();
+        if (activeChatId&&chats[activeChatId]) document.getElementById('chatTitle').textContent=chats[activeChatId].title;
+
+        if (isBlocked) showBlockScreen();
+        checkBlockStatus();
+    }, 600);
+}
+
+function handleLogout() {
+    saveLocal();
+    localStorage.removeItem('ai_user');
+    currentUser=null; chats={}; chatCounter=0; activeChatId=null;
+    isBlocked=false; badWordCount=0; isAdmin=false;
+    document.getElementById('loginOverlay').classList.remove('hidden');
+    document.getElementById('app').classList.remove('vis');
+    document.getElementById('loginUser').value='';
+    document.getElementById('loginPass').value='';
+    document.getElementById('loginError').textContent='';
+    document.getElementById('adminBtn').style.display='none';
+}
+
+function checkSavedLogin() {
+    const s=localStorage.getItem('ai_user');
+    if (!s) return;
+    currentUser=s;
+    isAdmin=(s===ADMIN_USER);
+    loadLocal();
+    if (Object.keys(chats).length===0&&!activeChatId) {
+        /* ใหม่เลย */
     }
-    // ถ้า Firebase ไม่มีข้อมูล ลอง localStorage
-    if (!loaded) {
-        loaded = loadLocal();
-    }
-
-    localStorage.setItem('ai_user', email);
-
-    btn.innerHTML = '<i class="fas fa-arrow-right" style="margin-right:8px;"></i>เข้าสู่ระบบ';
-    btn.disabled = false;
-
     document.getElementById('loginOverlay').classList.add('hidden');
     document.getElementById('app').classList.add('vis');
-    document.getElementById('uAv').textContent = email[0].toUpperCase();
-
+    document.getElementById('uAv').textContent=s[0].toUpperCase();
+    if (isAdmin) document.getElementById('adminBtn').style.display='flex';
     renderChatList(); renderMessages();
-    if (activeChatId && chats[activeChatId]) document.getElementById('chatTitle').textContent = chats[activeChatId].title;
-
+    if (activeChatId&&chats[activeChatId]) document.getElementById('chatTitle').textContent=chats[activeChatId].title;
     if (isBlocked) showBlockScreen();
     checkBlockStatus();
 }
 
-function handleLogout() {
-    saveToFirebase(); saveLocal();
-    localStorage.removeItem('ai_user');
-    currentUser = null; chats = {}; chatCounter = 0; activeChatId = null;
-    isBlocked = false; badWordCount = 0;
-    document.getElementById('loginOverlay').classList.remove('hidden');
-    document.getElementById('app').classList.remove('vis');
-    document.getElementById('loginEmail').value = '';
-    document.getElementById('loginError').textContent = '';
-}
-
-function checkSavedLogin() {
-    const s = localStorage.getItem('ai_user');
-    if (!s) return;
-    currentUser = s;
-    let loaded = false;
-    if (firebaseReady) loaded = loadFromFirebase(s);
-    if (!loaded) loaded = loadLocal();
-    if (loaded || Object.keys(chats).length === 0) {
-        document.getElementById('loginOverlay').classList.add('hidden');
-        document.getElementById('app').classList.add('vis');
-        document.getElementById('uAv').textContent = s[0].toUpperCase();
-        renderChatList(); renderMessages();
-        if (activeChatId && chats[activeChatId]) document.getElementById('chatTitle').textContent = chats[activeChatId].title;
-        if (isBlocked) showBlockScreen();
-        checkBlockStatus();
-    }
-}
-
 /* ===== บล็อก ===== */
-function checkBlockStatus() {
-    if (!isBlocked) return;
-    updateBlockTimer();
-}
 function showBlockScreen() { document.getElementById('blockOverlay').classList.add('show'); disInput(); updateBlockTimer(); }
 function updateBlockTimer() {
     if (!isBlocked) return;
-    const rem = blockEndTime - Date.now();
-    if (rem <= 0) { isBlocked = false; badWordCount = 0; document.getElementById('blockOverlay').classList.remove('show'); enInput(); saveToFirebase(); saveLocal(); return; }
-    const m = Math.floor(rem / 60000), s = Math.floor((rem % 60000) / 1000);
-    document.getElementById('blockTimer').textContent = `${m}:${s.toString().padStart(2, '0')}`;
-    setTimeout(updateBlockTimer, 500);
+    const rem=blockEndTime-Date.now();
+    if (rem<=0) { isBlocked=false; badWordCount=0; document.getElementById('blockOverlay').classList.remove('show'); enInput(); saveLocal(); return; }
+    const m=Math.floor(rem/60000), s=Math.floor((rem%60000)/1000);
+    document.getElementById('blockTimer').textContent=m+':'+s.toString().padStart(2,'0');
+    setTimeout(updateBlockTimer,500);
 }
-function applyBlock() {
-    isBlocked = true; blockEndTime = Date.now() + 5 * 60 * 1000;
-    saveToFirebase(); saveLocal(); showBlockScreen();
-}
-function disInput() { document.getElementById('chatIn').disabled = true; document.getElementById('sendBtn').disabled = true; }
-function enInput() { document.getElementById('chatIn').disabled = false; document.getElementById('sendBtn').disabled = false; document.getElementById('chatIn').focus(); }
+function applyBlock() { isBlocked=true; blockEndTime=Date.now()+5*60*1000; saveLocal(); showBlockScreen(); }
+function disInput() { document.getElementById('chatIn').disabled=true; document.getElementById('sendBtn').disabled=true; }
+function enInput() { document.getElementById('chatIn').disabled=false; document.getElementById('sendBtn').disabled=false; document.getElementById('chatIn').focus(); }
 
 /* ===== คำหยาบ ===== */
-function hasBadWord(t) { const l = t.toLowerCase().replace(/[^a-z\u0E00-\u0E7F]/g, ' '); return badWords.some(w => l.includes(w.toLowerCase())); }
+function hasBadWord(t) { const l=t.toLowerCase().replace(/[^a-z\u0E00-\u0E7F]/g,' '); return badWords.some(w=>l.includes(w.toLowerCase())); }
 
 /* ===== ธีม ===== */
 function toggleTheme() {
-    if (currentTheme === 'dark') { currentTheme = 'light'; document.documentElement.setAttribute('data-theme', 'light'); document.getElementById('themeIcon').className = 'fas fa-sun'; document.getElementById('themeTxt').textContent = 'มืด'; }
-    else { currentTheme = 'dark'; document.documentElement.removeAttribute('data-theme'); document.getElementById('themeIcon').className = 'fas fa-moon'; document.getElementById('themeTxt').textContent = 'สว่าง'; }
-    localStorage.setItem('ai_theme', currentTheme);
+    if (currentTheme==='dark') { currentTheme='light'; document.documentElement.setAttribute('data-theme','light'); document.getElementById('themeIcon').className='fas fa-sun'; document.getElementById('themeTxt').textContent='มืด'; }
+    else { currentTheme='dark'; document.documentElement.removeAttribute('data-theme'); document.getElementById('themeIcon').className='fas fa-moon'; document.getElementById('themeTxt').textContent='สว่าง'; }
+    localStorage.setItem('ai_theme',currentTheme);
 }
-function loadTheme() { const s = localStorage.getItem('ai_theme'); if (s === 'light') { currentTheme = 'light'; document.documentElement.setAttribute('data-theme', 'light'); document.getElementById('themeIcon').className = 'fas fa-sun'; document.getElementById('themeTxt').textContent = 'มืด'; } }
-
-/* ===== โมเดล ===== */
-function handleModelCh() { const sel = document.getElementById('modelSel'); if (sel.value === 'my-ai-v2') { document.getElementById('payModal').classList.add('show'); sel.value = 'my-ai'; return; } currentModel = sel.value; document.getElementById('chatModelLbl').textContent = 'โมเดล 0.1'; document.getElementById('mlInfo').classList.remove('show'); }
-function closePayModal() { document.getElementById('payModal').classList.remove('show'); }
+function loadTheme() { const s=localStorage.getItem('ai_theme'); if(s==='light'){currentTheme='light';document.documentElement.setAttribute('data-theme','light');document.getElementById('themeIcon').className='fas fa-sun';document.getElementById('themeTxt').textContent='มืด';} }
 
 /* ===== แชท ===== */
-function newChat() { chatCounter++; const id = 'c_' + Date.now() + '_' + chatCounter; chats[id] = { title: 'แชทใหม่', messages: [] }; activeChatId = id; renderChatList(); renderMessages(); saveToFirebase(); saveLocal(); closeSBM(); }
-function switchChat(id) { activeChatId = id; renderChatList(); renderMessages(); closeSBM(); }
-async function deleteChat(id, e) {
+function newChat() { chatCounter++; const id='c_'+Date.now()+'_'+chatCounter; chats[id]={title:'แชทใหม่',messages:[]}; activeChatId=id; renderChatList(); renderMessages(); saveLocal(); closeSBM(); }
+function switchChat(id) { activeChatId=id; renderChatList(); renderMessages(); closeSBM(); }
+function deleteChat(id,e) {
     e.stopPropagation(); delete chats[id];
-    if (activeChatId === id) { const keys = Object.keys(chats); activeChatId = keys.length ? keys[keys.length - 1] : null; }
-    renderChatList(); renderMessages(); deleteChatFirebase(id); saveLocal();
+    if (activeChatId===id) { const keys=Object.keys(chats); activeChatId=keys.length?keys[keys.length-1]:null; }
+    renderChatList(); renderMessages(); saveLocal();
 }
 
 function renderChatList() {
-    const list = document.getElementById('chatList'), keys = Object.keys(chats).reverse();
-    if (!keys.length) { list.innerHTML = '<div style="padding:2rem 1rem;text-align:center;color:var(--txt2);font-size:.78rem;"><i class="fas fa-inbox" style="font-size:1.4rem;display:block;margin-bottom:.5rem;opacity:.3;"></i>ยังไม่มีประวัติแชท</div>'; return; }
-    list.innerHTML = keys.map(id => { const c = chats[id]; return `<div class="ci ${id === activeChatId ? 'act' : ''}" onclick="switchChat('${id}')"><i class="fas fa-message" style="font-size:.7rem;flex-shrink:0;"></i><span class="ct">${c.title}</span><button class="db" onclick="deleteChat('${id}',event)" title="ลบ"><i class="fas fa-trash"></i></button></div>`; }).join('');
+    const list=document.getElementById('chatList'), keys=Object.keys(chats).reverse();
+    if (!keys.length) { list.innerHTML='<div style="padding:2rem 1rem;text-align:center;color:var(--txt2);font-size:.78rem;"><i class="fas fa-inbox" style="font-size:1.4rem;display:block;margin-bottom:.5rem;opacity:.3;"></i>ยังไม่มีประวัติแชท</div>'; return; }
+    list.innerHTML=keys.map(id=>{const c=chats[id];return '<div class="ci '+(id===activeChatId?'act':'')+'" onclick="switchChat(\''+id+'\')"><i class="fas fa-message" style="font-size:.7rem;flex-shrink:0;"></i><span class="ct">'+c.title+'</span><button class="db" onclick="deleteChat(\''+id+'\',event)" title="ลบ"><i class="fas fa-trash"></i></button></div>';}).join('');
 }
 
 function renderMessages() {
-    const box = document.getElementById('chatMsgs');
-    if (!activeChatId || !chats[activeChatId] || !chats[activeChatId].messages.length) { box.innerHTML = buildWelcome(); return; }
-    const avAI = AI_LOGO_URL ? `<img src="${AI_LOGO_URL}" alt="">` : '<i class="fas fa-robot"></i>';
-    box.innerHTML = chats[activeChatId].messages.map(m => {
-        if (m.isWarning) return `<div class="msg ai"><div class="m-av" style="background:var(--danger);box-shadow:0 2px 12px var(--glow-r);">!</div><div class="m-con"><span class="m-sender as">${BRAND_HTML}</span><div class="m-bub warn">${m.text}</div></div></div>`;
-        const isAi = m.role === 'ai';
-        return `<div class="msg ${m.role}"><div class="m-av">${isAi ? avAI : '<i class="fas fa-user" style="font-size:.7rem;"></i>'}</div><div class="m-con"><span class="m-sender ${isAi ? 'as' : 'us'}">${isAi ? BRAND_HTML : 'คุณ'}</span><div class="m-bub">${m.text}</div></div></div>`;
+    const box=document.getElementById('chatMsgs');
+    if (!activeChatId||!chats[activeChatId]||!chats[activeChatId].messages.length) { box.innerHTML=buildWelcome(); return; }
+    const avAI=AI_LOGO_URL?'<img src="'+AI_LOGO_URL+'" alt="">':'<i class="fas fa-robot"></i>';
+    box.innerHTML=chats[activeChatId].messages.map(m=>{
+        if(m.isWarning) return '<div class="msg ai"><div class="m-av" style="background:var(--danger);box-shadow:0 2px 12px var(--glow-r);">!</div><div class="m-con"><span class="m-sender as">'+BRAND_HTML+'</span><div class="m-bub warn">'+m.text+'</div></div></div>';
+        const isAi=m.role==='ai';
+        return '<div class="msg '+m.role+'"><div class="m-av">'+(isAi?avAI:'<i class="fas fa-user" style="font-size:.7rem;"></i>')+'</div><div class="m-con"><span class="m-sender '+(isAi?'as':'us')+'">'+(isAi?BRAND_HTML:'คุณ')+'</span><div class="m-bub">'+m.text+'</div></div></div>';
     }).join('');
-    box.scrollTop = box.scrollHeight;
+    box.scrollTop=box.scrollHeight;
 }
 
 function buildWelcome() {
-    return `<div class="welcome">
-        <div class="w-logo">${logoHTML(88, true)}</div>
-        <div class="brand brand-lg">${BRAND_HTML}</div>
-        <p class="w-sub">ถามอะไรก็ได้เลย ฉันพร้อมช่วยเหลือเสมอนะคะ</p>
-        <div class="w-hints">
-            <div class="w-hint" onclick="quickAsk('ช่วยอธิบายเรื่อง AI หน่อย')">AI คืออะไร</div>
-            <div class="w-hint" onclick="quickAsk('เล่าเรื่องตลกหน่อย')">เล่าเรื่องตลก</div>
-            <div class="w-hint" onclick="quickAsk('แนะนำหนังสั้นสนุกๆ')">หนังสั้นแนะนำ</div>
-        </div>
-    </div>`;
+    return '<div class="welcome"><div class="w-logo">'+logoHTML(88,true)+'</div><div class="brand brand-lg">'+BRAND_HTML+'</div><p class="w-sub">ถามอะไรก็ได้เลย ระบบพร้อมทำงานแล้ว</p><div class="w-hints"><div class="w-hint" onclick="quickAsk(\'1+1\')">1+1 เท่าไหร่</div><div class="w-hint" onclick="quickAsk(\'แบยีติวให้ก่อตั้งปีใหน\')">ก่อตั้งปีไหน</div><div class="w-hint" onclick="quickAsk(\'ชื่อแอปนี้คืออะไร\')">ชื่อแอป</div></div></div>';
 }
 
-function quickAsk(t) { document.getElementById('chatIn').value = t; sendMsg(); }
+function quickAsk(t) { document.getElementById('chatIn').value=t; sendMsg(); }
+
+/* ===== ตรรกะ AI ต้นแบบ (จากโค้ดด้านล่าง) ===== */
+function getAIResponse(question) {
+    let q=question.trim();
+    /* ขั้นที่ 1: ตรงตัวเป๊ะ */
+    if (aiKnowledge[q]) return aiKnowledge[q];
+    /* ขั้นที่ 2: Synonym */
+    if (aiSynonyms[q]) {
+        let tgt=aiSynonyms[q];
+        if (aiKnowledge[tgt]) return aiKnowledge[tgt];
+    }
+    /* ขั้นที่ 3: Keyword บางส่วน */
+    for (let key in aiKnowledge) {
+        if (q.includes(key)||key.includes(q)) return aiKnowledge[key];
+    }
+    /* ขั้นที่ 4: ค้นใน PDF */
+    if (pdfMemoryText.length>0) {
+        let words=q.split(' ').filter(w=>w.length>2);
+        let sentences=pdfMemoryText.split(/[\n\.]/);
+        for (let sentence of sentences) {
+            let matchCount=words.filter(word=>sentence.includes(word)).length;
+            if (matchCount>0&&sentence.length>10) {
+                let clean=sentence.replace(/[^\u0E00-\u0E7F\w\s]/g,'').trim();
+                if (clean!=='') return '(อ้างอิงจากไฟล์) '+clean;
+            }
+        }
+    }
+    return unknownResp;
+}
 
 /* ===== ส่งข้อความ ===== */
 async function sendMsg() {
-    if (isBlocked || isGenerating) return;
-    const input = document.getElementById('chatIn'), text = input.value.trim();
+    if (isBlocked||isGenerating) return;
+    const input=document.getElementById('chatIn'), text=input.value.trim();
     if (!text) return;
     if (!activeChatId) newChat();
 
     if (hasBadWord(text)) {
         badWordCount++;
-        chats[activeChatId].messages.push({ role: 'user', text });
-        chats[activeChatId].messages.push({ role: 'ai', text: roasts[Math.floor(Math.random() * roasts.length)], isWarning: true });
-        if (chats[activeChatId].messages.length <= 2) chats[activeChatId].title = text.substring(0, 26) + (text.length > 26 ? '...' : '');
-        renderMessages(); renderChatList(); saveToFirebase(); saveLocal(); input.value = '';
-        if (badWordCount >= 2) { showToast('คุณถูกบล็อก 5 นาที เนื่องจากใช้คำหยาบซ้ำ', 'error'); setTimeout(applyBlock, 800); }
+        chats[activeChatId].messages.push({role:'user',text});
+        chats[activeChatId].messages.push({role:'ai',text:roasts[Math.floor(Math.random()*roasts.length)],isWarning:true});
+        if (chats[activeChatId].messages.length<=2) chats[activeChatId].title=text.substring(0,26)+(text.length>26?'...':'');
+        renderMessages(); renderChatList(); saveLocal(); input.value='';
+        if (badWordCount>=2) { showToast('คุณถูกบล็อก 5 นาที เนื่องจากใช้คำหยาบซ้ำ','error'); setTimeout(applyBlock,800); }
         return;
     }
 
-    chats[activeChatId].messages.push({ role: 'user', text });
-    if (chats[activeChatId].messages.length === 1) { chats[activeChatId].title = text.substring(0, 26) + (text.length > 26 ? '...' : ''); renderChatList(); }
-    document.getElementById('chatTitle').textContent = chats[activeChatId].title;
-    renderMessages(); input.value = ''; saveToFirebase(); saveLocal();
+    chats[activeChatId].messages.push({role:'user',text});
+    if (chats[activeChatId].messages.length===1) { chats[activeChatId].title=text.substring(0,26)+(text.length>26?'...':''); renderChatList(); }
+    document.getElementById('chatTitle').textContent=chats[activeChatId].title;
+    renderMessages(); input.value=''; saveLocal();
 
-    showThinking(); isGenerating = true; disInput();
-    let aiText = '';
-    try {
-        const res = await fetch('http://localhost:11434/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: currentModel, prompt: text, stream: false }) });
-        const data = await res.json(); aiText = data.response || '';
-        if (!aiText.trim() || aiText.trim().length < 3) aiText = unknownResp;
-    } catch (e) { aiText = unknownResp; }
+    showThinking(); isGenerating=true; disInput();
 
-    hideThinking(); await streamText(aiText);
-    isGenerating = false; enInput(); saveToFirebase(); saveLocal();
+    /* ใช้ตรรกะ AI ต้นแบบแทน API */
+    let aiText='';
+    await new Promise(r=>setTimeout(r,800));
+    aiText=getAIResponse(text);
+
+    hideThinking();
+    await streamText(aiText);
+    isGenerating=false; enInput(); saveLocal();
 }
 
 /* ===== Thinking ===== */
 function showThinking() {
-    const box = document.getElementById('chatMsgs'), w = box.querySelector('.welcome'); if (w) w.remove();
-    const avInner = AI_LOGO_URL ? `<img src="${AI_LOGO_URL}" alt="" style="opacity:.7;">` : '';
-    const el = document.createElement('div'); el.className = 'thk'; el.id = 'thkEl';
-    el.innerHTML = `<div class="m-av">${AI_LOGO_URL ? `<img src="${AI_LOGO_URL}" alt="">` : '<i class="fas fa-robot"></i>'}</div>
-        <div><span class="m-sender as" style="margin-bottom:4px;display:block;">${BRAND_HTML}</span>
-        <div class="anime-face">${avInner}<div class="think-bub"><span></span><span></span><span></span></div><div class="eye l"></div><div class="eye r"></div><div class="blush l"></div><div class="blush r"></div><div class="mouth"></div></div>
-        <div class="typ-row"><div class="typ-dots"><span></span><span></span><span></span></div><span class="typ-label">รอแปปกำลังคิด...</span></div></div>`;
-    box.appendChild(el); box.scrollTop = box.scrollHeight;
+    const box=document.getElementById('chatMsgs'), w=box.querySelector('.welcome'); if(w) w.remove();
+    const el=document.createElement('div'); el.className='thk'; el.id='thkEl';
+    const avInner=AI_LOGO_URL?'<img src="'+AI_LOGO_URL+'" alt="" style="opacity:.7;">':'';
+    el.innerHTML='<div class="m-av">'+(AI_LOGO_URL?'<img src="'+AI_LOGO_URL+'" alt="">':'<i class="fas fa-robot"></i>')+'</div><div><span class="m-sender as" style="margin-bottom:4px;display:block;">'+BRAND_HTML+'</span><div class="anime-face">'+avInner+'<div class="think-bub"><span></span><span></span><span></span></div><div class="eye l"></div><div class="eye r"></div><div class="blush l"></div><div class="blush r"></div><div class="mouth"></div></div><div class="typ-row"><div class="typ-dots"><span></span><span></span><span></span></div><span class="typ-label">รอแปปกำลังคิด...</span></div></div>';
+    box.appendChild(el); box.scrollTop=box.scrollHeight;
 }
-function hideThinking() { const el = document.getElementById('thkEl'); if (el) el.remove(); }
+function hideThinking() { const el=document.getElementById('thkEl'); if(el) el.remove(); }
 
 /* ===== Stream ===== */
 async function streamText(fullText) {
-    const box = document.getElementById('chatMsgs'), msgEl = document.createElement('div'); msgEl.className = 'msg ai';
-    const avAI = AI_LOGO_URL ? `<img src="${AI_LOGO_URL}" alt="">` : '<i class="fas fa-robot"></i>';
-    msgEl.innerHTML = `<div class="m-av">${avAI}</div><div class="m-con"><span class="m-sender as">${BRAND_HTML}</span><div class="m-bub s-cur" id="sBub"></div></div>`;
+    const box=document.getElementById('chatMsgs'), msgEl=document.createElement('div'); msgEl.className='msg ai';
+    const avAI=AI_LOGO_URL?'<img src="'+AI_LOGO_URL+'" alt="">':'<i class="fas fa-robot"></i>';
+    msgEl.innerHTML='<div class="m-av">'+avAI+'</div><div class="m-con"><span class="m-sender as">'+BRAND_HTML+'</span><div class="m-bub s-cur" id="sBub"></div></div>';
     box.appendChild(msgEl);
-    const bubble = document.getElementById('sBub'), runner = document.getElementById('rchar');
+    const bubble=document.getElementById('sBub'), runner=document.getElementById('rchar');
     runner.classList.add('show');
-    for (let i = 0; i < fullText.length; i++) {
-        bubble.textContent += fullText[i]; box.scrollTop = box.scrollHeight;
-        const bR = bubble.getBoundingClientRect(), tP = bR.top + bR.height / 2 - 23;
-        runner.style.top = Math.max(70, Math.min(tP, window.innerHeight - 70)) + 'px';
-        await new Promise(r => setTimeout(r, 20));
+    for (let i=0;i<fullText.length;i++) {
+        bubble.textContent+=fullText[i]; box.scrollTop=box.scrollHeight;
+        const bR=bubble.getBoundingClientRect(), tP=bR.top+bR.height/2-23;
+        runner.style.top=Math.max(70,Math.min(tP,window.innerHeight-70))+'px';
+        await new Promise(r=>setTimeout(r,20));
     }
     bubble.classList.remove('s-cur'); runner.classList.remove('show');
-    if (activeChatId && chats[activeChatId]) chats[activeChatId].messages.push({ role: 'ai', text: fullText });
+    if (activeChatId&&chats[activeChatId]) chats[activeChatId].messages.push({role:'ai',text:fullText});
     renderChatList();
 }
 
 /* ===== Toast ===== */
-function showToast(msg, type = '') {
-    const c = document.getElementById('toastC'), t = document.createElement('div');
-    t.className = 'toast' + (type ? ' ' + type : '');
-    t.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>${msg}`;
-    c.appendChild(t); requestAnimationFrame(() => t.classList.add('show'));
-    setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3500);
+function showToast(msg,type) {
+    const c=document.getElementById('toastC'), t=document.createElement('div');
+    t.className='toast'+(type?' '+type:'');
+    t.innerHTML='<i class="fas '+(type==='error'?'fa-exclamation-circle':'fa-check-circle')+'"></i>'+msg;
+    c.appendChild(t); requestAnimationFrame(()=>t.classList.add('show'));
+    setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
 }
 
 /* ===== Sidebar ===== */
 function toggleSB() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sbOverlay').classList.toggle('show'); }
 function closeSBM() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sbOverlay').classList.remove('show'); }
 
-/* ===== Particles ===== */
-function initParticles() {
-    const canvas = document.getElementById('particleCanvas'), ctx = canvas.getContext('2d');
-    let particles = [], w, h;
-    function resize() { w = canvas.width = canvas.parentElement.offsetWidth; h = canvas.height = canvas.parentElement.offsetHeight; }
-    resize(); window.addEventListener('resize', resize);
-
-    class P {
-        constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * w; this.y = Math.random() * h;
-            this.sz = Math.random() * 1.8 + 0.4;
-            this.vx = (Math.random() - 0.5) * 0.25;
-            this.vy = (Math.random() - 0.5) * 0.25;
-            this.op = Math.random() * 0.4 + 0.05;
-            this.opDir = (Math.random() - 0.5) * 0.005;
-            this.col = Math.random() > 0.5 ? '168,85,247' : (Math.random() > 0.5 ? '239,68,68' : '129,140,248');
-        }
-        update() {
-            this.x += this.vx; this.y += this.vy;
-            this.op += this.opDir;
-            if (this.op <= 0.02 || this.op >= 0.45) this.opDir *= -1;
-            if (this.x < -10 || this.x > w + 10 || this.y < -10 || this.y > h + 10) this.reset();
-        }
-        draw() {
-            ctx.beginPath(); ctx.arc(this.x, this.y, this.sz, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${this.col},${this.op})`; ctx.fill();
-        }
-    }
-    for (let i = 0; i < 45; i++) particles.push(new P());
-
-    function loop() {
-        ctx.clearRect(0, 0, w, h);
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(loop);
-    }
-    loop();
+/* ===== แอดมิน ===== */
+function openAdmin() {
+    if (!isAdmin) return;
+    document.getElementById('adminModal').classList.add('show');
+    renderKnowledgeList(); renderSynonymList();
+    updatePdfStatus();
+}
+function closeAdmin() { document.getElementById('adminModal').classList.remove('show'); }
+function switchAdTab(idx, btn) {
+    document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('act'));
+    document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('act'));
+    btn.classList.add('act');
+    document.getElementById('adSec'+idx).classList.add('act');
 }
 
-/* ===== Init ===== */
-loadTheme();
-initFirebase();
-initLogos();
-initParticles();
-checkSavedLogin();
-document.getElementById('loginEmail').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
-document.getElementById('payModal').addEventListener('click', function(e) { if (e.target === this) closePayModal(); });
+function trainAI() {
+    const q=document.getElementById('trainQ').value.trim();
+    const a=document.getElementById('trainA').value.trim();
+    if (!q||!a) { showToast('กรอกข้อมูลให้ครบ','error'); return; }
+    aiKnowledge[q]=a;
+    saveDB();
+    document.getElementById('trainQ').value='';
+    document.getElementById('trainA').value='';
+    showToast('บันทึกคำถามหลักเรียบร้อย','success');
+}
+
+function trainSynonym() {
+    const nq=document.getElementById('synNew').value.trim();
+    const tq=document.getElementById('synTarget').value.trim();
+    if (!nq||!tq) { showToast('กรอกข้อมูลคำคล้ายและคำถามหลักให้ครบ','error'); return; }
+    if (!aiKnowledge[tq]) { showToast('ไม่พบคำถามหลัก "'+tq+'" ในระบบ! เพิ่มในแท็บ "สอน Q&A" ก่อน','error'); return; }
+    aiSynonyms[nq]=tq;
+    saveDB();
+    document.getElementById('synNew').value='';
+    document.getElementById('synTarget').value='';
+    showToast('เชื่อมโยงคำคล้ายเรียบร้อย','success');
+}
+
+async function extractPDFText() {
+    const fileInput=document.getElementById('pdfUpload');
+    const status=document.getElementById('pdfStatus');
+    if (!fileInput.files.length) { showToast('กรุณาเลือกไฟล์ PDF ก่อน','error'); return; }
+    status.innerHTML='<i class="fas fa-spinner fa-spin"></i> กำลังวิเคราะห์ PDF...';
+    const file=fileInput.files[0];
+    const reader=new FileReader();
+    reader.onload=async function(e) {
+        const typedarray=new Uint8Array(e.target.result);
+        try {
+            const pdf=await pdfjsLib.getDocument(typedarray).promise;
+            let fullText='';
+            for (let i=1;i<=pdf.numPages;i++) {
+                const page=await pdf.getPage(i);
+                const textContent=await page.getTextContent();
+                const pageText=textContent.items.map(item=>item.str).join(' ');
+                fullText+=pageText.replace(/\s+/g,' ')+'\n';
+            }
+            pdfMemoryText=fullText;
+            saveDB();
+            status.innerHTML='<i class="fas fa-check-circle" style="color:var(--purple);"></i> อ่านข้อมูลสำเร็จ ('+pdf.numPages+' หน้า) AI จำข้อมูลไว้แล้ว!';
+            showToast('อ่าน PDF สำเร็จ','success');
+        } catch(err) {
+            status.innerHTML='<i class="fas fa-times-circle" style="color:var(--danger);"></i> เกิดข้อผิดพลาดในการอ่านไฟล์';
+            showToast('อ่าน PDF ล้มเหลว','error');
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function clearPDF() {
+    if (!confirm('ต้องการลบความจำ PDF ทั้งหมดใช่หรือไม่?')) return;
+    pdfMemoryText='';
+    saveDB();
+    document.getElementById('pdfUpload').value='';
+    updatePdfStatus();
+    showToast('ลบข้อมูล PDF เรียบร้อย','success');
+}
+
+function updatePdfStatus() {
+    const s=document.getElementById('pdfStatus');
+    if (pdfMemoryText!=='') s.innerHTML='<i class="fas fa-file-pdf" style="color:var(--purple);"></i> มีข้อมูล PDF ในระบบแล้ว ('+pdfMemoryText.length+' ตัวอักษร)';
+    else s.innerHTML='<i class="fas fa-info-circle"></i> ยังไม่มีข้อมูล PDF ในระบบ';
+}
+
+function renderKnowledgeList() {
+    const listDiv=document.getElementById('knowledgeList');
+    const countEl=document.getElementById('kCount');
+    const keys=Object.keys(aiKnowledge);
+    countEl.textContent=keys.length;
+    if (!keys.length) { listDiv.innerHTML='<div class="adm-list-empty"><i class="fas fa-inbox" style="display:block;margin-bottom:.4rem;opacity:.4;"></i>ยังไม่มีข้อมูลที่เทรน</div>'; return; }
+    listDiv.innerHTML=keys.map(key=>'<div class="adm-item"><span><b>Q:</b> '+key+' → <b>A:</b> '+aiKnowledge[key]+'</span><button class="del-btn" onclick="deleteKnowledge(\''+key.replace(/'/g,"\\'")+'\')"><i class="fas fa-trash"></i></button></div>').join('');
+}
+
+function renderSynonymList() {
+    const listDiv=document.getElementById('synonymList');
+    const countEl=document.getElementById('sCount');
+    const keys=Object.keys(aiSynonyms);
+    countEl.textContent=keys.length;
+    if (!keys.length) { listDiv.innerHTML='<div class="adm-list-empty"><i class="fas fa-inbox" style="display:block;margin-bottom:.4rem;opacity:.4;"></i>ยังไม่มีคำคล้ายที่เชื่อมโยง</div>'; return; }
+    listDiv.innerHTML=keys.map(key=>'<div class="adm-item"><span>'+key+' <span class="arrow"><i class="fas fa-arrow-right"></i></span> '+aiSynonyms[key]+'</span><button class="del-btn" onclick="deleteSynonym(\''+key.replace(/'/g,"\\'")+'\')"><i class="fas fa-trash"></i></button></div>').join('');
+}
+
+function deleteKnowledge(key) {
+    if (!confirm('ต้องการลบคำถามหลัก "'+key+'" ใช่หรือไม่?')) return;
+    delete aiKnowledge[key];
+    saveDB();
+    showToast('ลบคำถามหลักเรียบร้อย','success');
+}
+
+function deleteSynonym(key) {
+    if (!confirm('ต้องการลบลิงก์คำคล้าย "'+key+'" ใช่หรือไม่?')) return;
+    delete aiSynonyms[key];
+    saveDB();
+    showToast('ลบคำคล้ายเรียบร้อย','success');
+}
+
+/* ===== Particles ===== */
+function initParticles() {
+    const canvas=document.getElementById('particleCanvas'), ctx=canvas.getContext('2d');
+    let particles=[], w, h;
+    function resize() { w=canvas.width=canvas.parentElement.offsetWidth; h=canvas.height=canvas.parentElement.offsetHeight; }
+    resize(); window.addEventListener('resize',resize);
+    for (let i=0;i<60;i++) particles.push(new Particle());
+    function Particle(){this.reset();}
+    Particle.prototype.reset=function(){
+        this.x=Math.random()*w;this.y=Math.random()*h;
+        this.sz=Math.random()*1.8+0.4;
+        this.vx=(Math.random()-0.5)*0.25;this.vy=(Math.random()-0.5)*0.25;
+        this.op=Math.random()*0.4+0.05;this.opDir=(Math.random()-0.5)*0.005;
+        this.col=Math.random()>0.5?'168,85,247':(Math.random()>0.5?'239,68,68':'129,140,248');
+    };
+    Particle.prototype.update=function(){
+        this.x+=this.vx;this.y+=this.vy;this.op+=this.opDir;
+        if(this.op<=0.02||this.op>=0.45)this.opDir*=-1;
+        if(this.x<0||this.x>w)this.vx*=-1;
+        if(this.y<0||this.y>h)this.vy*=-1;
+    };
+    Particle.prototype.draw=function(){
+        ctx.beginPath();ctx.arc(this.x,this.y,this.sz,0,Math.PI*2);
+        ctx.fillStyle='rgba('+this.col+','+this.op+')';ctx.fill();
+    };
+    function animate(){
+        ctx.clearRect(0,0,w,h);
+        particles.forEach(p=>{p.update();p.draw();});
+        for(let i=0;i<particles.length;i++){
+            for(let j=i+1;j<particles.length;j++){
+                const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y;
+                const dist=Math.sqrt(dx*dx+dy*dy);
+                if(dist<100){
+                    ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);
+                    ctx.strokeStyle='rgba(168,85,247,'+(0.06*(1-dist/100))+')';ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+/* ===== เริ่มต้น ===== */
+window.addEventListener('DOMContentLoaded', () => {
+    initLogos();
+    loadTheme();
+    initParticles();
+    checkSavedLogin();
+});
+
+/* ปิดแอดมินด้วย ESC */
+document.addEventListener('keydown', e => {
+    if (e.key==='Escape') {
+        if (document.getElementById('adminModal').classList.contains('show')) closeAdmin();
+    }
+});
 </script>
 </body>
 </html>
